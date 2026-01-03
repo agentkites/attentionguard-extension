@@ -18,7 +18,7 @@
     let allContent = '';
     scripts.forEach(s => { allContent += s.textContent; });
 
-    const data = { stories: [], socialContexts: [] };
+    const data = { stories: [], socialContexts: [], algorithmicUnits: [], manipulationSignals: {} };
     const seenIds = {};
 
     // Find stories with sponsored indicator
@@ -55,6 +55,72 @@
     while ((match = socialPattern.exec(allContent)) !== null) {
       data.socialContexts.push(match[1]);
     }
+
+    // Find algorithmic feed units (recommendations, suggestions, etc.)
+    const algorithmicPatterns = [
+      { pattern: /PaginatedPeopleYouMayKnowFeedUnit/g, category: 'PEOPLE_YOU_MAY_KNOW', label: 'People You May Know' },
+      { pattern: /SuggestedGroupUnit|GroupDiscoverUnit/g, category: 'SUGGESTED_GROUPS', label: 'Suggested Groups' },
+      { pattern: /ReelUnit|"__typename":"[^"]*Reel/g, category: 'REELS', label: 'Reels' },
+      { pattern: /FriendingRequestsSideFeedUnit/g, category: 'FRIEND_REQUESTS', label: 'Friend Requests' },
+      { pattern: /AdsSideFeedUnit/g, category: 'SIDE_ADS', label: 'Side Ads' },
+      { pattern: /RemindersSideFeedUnit|BirthdayRemindersSideFeedSubUnit/g, category: 'REMINDERS', label: 'Reminders' },
+      { pattern: /VideoHomeUnit|WatchFeedUnit/g, category: 'WATCH_FEED', label: 'Watch Feed' },
+      { pattern: /people_you_may_know|PeopleYouMayKnow/gi, category: 'PYMK_SIGNAL', label: 'PYMK Signal' },
+      // Follow CTA = suggested pages/profiles (algorithmic recommendations)
+      { pattern: /CometFeedStoryFollowButtonStrategy/g, category: 'SUGGESTED_FOLLOWS', label: 'Suggested Follows (with Follow CTA)' },
+      { pattern: /FollowProfileActionLink/g, category: 'FOLLOW_PROFILE', label: 'Follow Profile Links' },
+    ];
+
+    algorithmicPatterns.forEach(({ pattern, category, label }) => {
+      const matches = allContent.match(pattern);
+      if (matches && matches.length > 0) {
+        data.algorithmicUnits.push({ category, label, count: matches.length });
+      }
+    });
+
+    // Detect manipulation signals (dark patterns, engagement hooks)
+    const manipulationCategories = {
+      SOCIAL_PROOF: {
+        patterns: [/seen_by|SeenBy/gi, /mutual_friends|MutualFriends/gi, /reaction_count|total_count/gi],
+        severity: 'medium',
+        label: 'Social Proof'
+      },
+      FOMO_URGENCY: {
+        patterns: [/is_live|live_status|LiveNow/gi, /trending|Trending/gi, /expires|expiration/gi],
+        severity: 'high',
+        label: 'FOMO/Urgency'
+      },
+      AUTOPLAY: {
+        patterns: [/autoplay|auto_play/gi],
+        severity: 'high',
+        label: 'Autoplay Videos'
+      },
+      INFINITE_SCROLL: {
+        patterns: [/has_next_page|hasNextPage/gi],
+        severity: 'medium',
+        label: 'Infinite Scroll'
+      },
+      VARIABLE_REWARDS: {
+        patterns: [/new_feed_items|has_new|unseen_count/gi, /badge_count|unread_count/gi],
+        severity: 'high',
+        label: 'Variable Rewards (notifications)'
+      }
+    };
+
+    Object.entries(manipulationCategories).forEach(([category, config]) => {
+      let totalCount = 0;
+      config.patterns.forEach(pattern => {
+        const matches = allContent.match(pattern);
+        if (matches) totalCount += matches.length;
+      });
+      if (totalCount > 0) {
+        data.manipulationSignals[category] = {
+          count: totalCount,
+          severity: config.severity,
+          label: config.label
+        };
+      }
+    });
 
     return data;
   }
@@ -96,17 +162,55 @@
       }
     });
 
+    // Track algorithmic feed units
+    jsonData.algorithmicUnits.forEach(unit => {
+      const id = AG.generateId('algo', unit.category);
+      if (!session.items[id]) {
+        const labels = [{
+          category: unit.category,
+          text: unit.label + ' (' + unit.count + ')',
+          type: 'algorithmic',
+          severity: 'high'
+        }];
+        AG.addToSession(session, id, AG.CLASSIFICATION.ALGORITHMIC, labels);
+      }
+    });
+
+    // Track manipulation signals (dark patterns)
+    Object.entries(jsonData.manipulationSignals).forEach(([category, signal]) => {
+      const id = AG.generateId('manipulation', category);
+      if (!session.items[id]) {
+        const labels = [{
+          category: category,
+          text: signal.label + ' (' + signal.count + ' signals)',
+          type: 'manipulation',
+          severity: signal.severity
+        }];
+        // Count manipulation signals as algorithmic for the rate calculation
+        AG.addToSession(session, id, AG.CLASSIFICATION.ALGORITHMIC, labels);
+      }
+    });
+
     state.scanCount++;
     AG.reportStats(PLATFORM, session);
 
-    if (newCount > 0) {
+    const hasNewData = newCount > 0 || jsonData.algorithmicUnits.length > 0 || Object.keys(jsonData.manipulationSignals).length > 0;
+    if (hasNewData) {
       AG.log('Facebook', COLOR,
-        'Total:', session.total,
-        '| Ads:', session.ads,
+        'Ads:', session.ads,
+        '| Algo:', session.algorithmic || 0,
         '| Social:', session.social,
         '| Organic:', session.organic,
-        '| Rate:', AG.getManipulationRate(session) + '%'
+        '| Manipulation Rate:', AG.getManipulationRate(session) + '%'
       );
+
+      // Log manipulation signals detected
+      if (Object.keys(jsonData.manipulationSignals).length > 0) {
+        const signals = Object.entries(jsonData.manipulationSignals)
+          .map(([cat, s]) => s.label + ':' + s.count)
+          .join(', ');
+        console.log('%c  [Dark Patterns] ' + signals, 'color: #ff6b6b;');
+      }
     }
 
     return session;
