@@ -222,6 +222,7 @@
     // Notify background that Facebook is active
     AG.notifyActive(PLATFORM);
 
+    // MutationObserver for DOM changes (new posts rendered)
     const observer = new MutationObserver(mutations => {
       let shouldScan = false;
 
@@ -229,7 +230,12 @@
         if (m.addedNodes.length > 0) {
           for (const node of m.addedNodes) {
             if (node.nodeType === 1) {
-              if (node.tagName === 'SCRIPT' || (node.textContent && node.textContent.length > 500)) {
+              // Trigger on: scripts, large content, OR feed-like elements
+              if (node.tagName === 'SCRIPT' ||
+                  (node.textContent && node.textContent.length > 200) ||
+                  node.getAttribute?.('role') === 'article' ||
+                  node.querySelector?.('[role="article"]') ||
+                  node.getAttribute?.('data-pagelet')?.includes('Feed')) {
                 shouldScan = true;
                 break;
               }
@@ -241,7 +247,7 @@
 
       if (shouldScan) {
         if (state.debounceTimer) clearTimeout(state.debounceTimer);
-        state.debounceTimer = setTimeout(scan, 1500);
+        state.debounceTimer = setTimeout(scan, 1000);
       }
     });
 
@@ -249,7 +255,18 @@
     state.observer = { stop: () => observer.disconnect() };
     state.isWatching = true;
 
-    AG.log('Facebook', COLOR, 'Real-time watching started (JSON parsing)');
+    // Scroll listener as backup - Facebook loads content on scroll
+    let scrollTimer = null;
+    const handleScroll = () => {
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(scan, 2000);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Periodic scan every 10 seconds as fallback
+    state.periodicTimer = setInterval(scan, 10000);
+
+    AG.log('Facebook', COLOR, 'Real-time watching started (DOM + Scroll + Periodic)');
     scan();
   }
 

@@ -223,34 +223,44 @@ const PLATFORM_CATEGORIES = {
       title: 'Facebook Ads',
       description: 'Sponsored content targeting you based on extensive data collection.',
       categories: [
-        { name: 'Sponsored Posts', severity: 'critical', desc: 'Paid advertisements in feed' },
+        { name: 'Sponsored Posts', severity: 'critical', desc: 'Paid advertisements in your feed (th_dat_spo)' },
+        { name: 'Side Ads', severity: 'critical', desc: 'Advertisements in sidebar' },
         { name: 'Suggested For You', severity: 'critical', desc: 'Promoted pages and content' }
       ]
     },
     algorithmic: {
       icon: '🤖',
-      title: 'Facebook Algorithm',
-      description: 'Content Facebook\'s algorithm selects to maximize engagement.',
+      title: 'Facebook Algorithm & Dark Patterns',
+      description: 'Content and psychological tactics designed to maximize engagement and time on platform.',
       categories: [
-        { name: 'Suggested Posts', severity: 'high', desc: 'From pages you don\'t follow' },
-        { name: 'Recommended Groups', severity: 'medium', desc: 'Group suggestions' },
-        { name: 'Watch Videos', severity: 'medium', desc: 'Video recommendations' }
+        { name: 'Suggested Follows', severity: 'high', desc: 'Posts with Follow CTA from pages you don\'t follow' },
+        { name: 'People You May Know', severity: 'high', desc: 'Friend suggestions to grow your network' },
+        { name: 'Reels', severity: 'high', desc: 'Short-form videos designed for addiction' },
+        { name: 'Social Proof', severity: 'high', desc: 'Showing "X people saw this", reaction counts' },
+        { name: 'FOMO/Urgency', severity: 'high', desc: 'LIVE indicators, trending, expiring content' },
+        { name: 'Variable Rewards', severity: 'high', desc: 'Notification badges, unread counts (slot machine mechanics)' },
+        { name: 'Autoplay', severity: 'medium', desc: 'Videos that auto-play to hijack attention' },
+        { name: 'Infinite Scroll', severity: 'medium', desc: 'Endless feed with no stopping point' },
+        { name: 'Reminders', severity: 'low', desc: 'Birthday and memory reminders to pull you back' },
+        { name: 'Friend Requests', severity: 'low', desc: 'Friend suggestions in side feed' }
       ]
     },
     social: {
       icon: '👥',
-      title: 'Facebook Social',
-      description: 'Content shown because friends interacted with it.',
+      title: 'Facebook Social Signals',
+      description: 'Content shown because friends interacted with it. Uses your social graph to manipulate.',
       categories: [
         { name: 'Friend Liked', severity: 'medium', desc: 'Posts your friends engaged with' },
         { name: 'Friend Commented', severity: 'medium', desc: 'Discussions friends joined' },
-        { name: 'Social Context', severity: 'medium', desc: 'X friends like this page' }
+        { name: 'Social Context', severity: 'medium', desc: '"X friends like this page" pressure' },
+        { name: 'Mutual Friends', severity: 'medium', desc: 'Showing mutual connections to build trust' },
+        { name: 'Seen By', severity: 'medium', desc: 'Showing who viewed content (social pressure)' }
       ]
     },
     organic: {
       icon: '✓',
       title: 'Your Friends & Pages',
-      description: 'Direct posts from friends and pages you follow.',
+      description: 'Direct posts from friends and pages you follow - the content you actually chose to see.',
       categories: [
         { name: 'Friends Posts', severity: 'low', desc: 'Direct posts from friends' },
         { name: 'Followed Pages', severity: 'low', desc: 'From pages you liked' }
