@@ -135,4 +135,7 @@
   }
 
   startWatch();
+
+  // Register for refresh requests
+  AG.registerPlatform(PLATFORM, session, scan);
 })();

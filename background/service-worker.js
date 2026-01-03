@@ -250,6 +250,27 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
     const tab = await chrome.tabs.get(tabId);
     const platform = activeTabs.get(tabId) || detectPlatform(tab.url);
     await updateIcon(tabId, platform);
+
+    // Request fresh stats from content script
+    if (platform) {
+      try {
+        await chrome.tabs.sendMessage(tabId, { type: 'REQUEST_STATS' });
+      } catch (e) {
+        // Content script might not be loaded yet
+      }
+    }
+
+    // Notify panel of tab change
+    const sessions = await getSessions();
+    chrome.runtime.sendMessage({
+      type: 'TAB_CHANGED',
+      data: {
+        platform,
+        session: platform ? sessions[platform.id] : null,
+        tabId,
+        url: tab.url
+      }
+    }).catch(() => {});
   } catch (e) {
     // Tab might not exist
   }

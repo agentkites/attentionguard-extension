@@ -236,8 +236,38 @@
         }
       }
       return matches;
+    },
+
+    // Registered platform sessions for refresh requests
+    _registeredPlatforms: {},
+
+    // Register a platform's session for refresh handling
+    registerPlatform: function(platform, session, scanFn) {
+      this._registeredPlatforms[platform] = { session, scanFn };
+    },
+
+    // Handle stats request from background
+    handleStatsRequest: function() {
+      for (const [platform, data] of Object.entries(this._registeredPlatforms)) {
+        // Trigger a fresh scan if available
+        if (data.scanFn) {
+          data.scanFn();
+        } else {
+          // Just report current stats
+          this.reportStats(platform, data.session);
+        }
+      }
     }
   };
+
+  // Listen for messages from background
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'REQUEST_STATS') {
+      AttentionGuard.handleStatsRequest();
+      sendResponse({ success: true });
+    }
+    return true;
+  });
 
   // Expose globally
   window.AttentionGuard = AttentionGuard;

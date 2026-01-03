@@ -430,4 +430,7 @@
       console.log('Is subscribed:', session.subscriptions.has(handle));
     }
   };
+
+  // Register for refresh requests (scan is async so wrap it)
+  AG.registerPlatform(PLATFORM, session, () => scan());
 })();

@@ -769,11 +769,26 @@ function setupEventListeners() {
   });
 }
 
-// Listen for stats broadcasts from background
+// Listen for stats broadcasts and tab changes from background
 chrome.runtime.onMessage.addListener(function(message) {
   if (message.type === 'STATS_BROADCAST' && currentPlatform) {
     if (message.data.platform === currentPlatform.id) {
       updateStats(message.data.stats);
+    }
+  }
+
+  // Handle tab change - refresh display
+  if (message.type === 'TAB_CHANGED') {
+    const { platform, session, url } = message.data;
+    currentPlatform = platform;
+    currentSession = session;
+
+    if (platform) {
+      // Show stats for new platform
+      showActivePlatform(platform, session);
+    } else {
+      // No supported platform on new tab
+      showNoPlatform(url);
     }
   }
 });
