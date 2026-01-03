@@ -22,12 +22,17 @@
     const seenIds = {};
 
     // Find stories with sponsored indicator
-    const sponsoredPattern = /"__typename":"Story"[^}]*?"th_dat_spo":(null|\{[^}]*?\})/g;
+    // Note: Match th_dat_spo directly - [^}]*? fails with nested JSON
+    const sponsoredPattern = /"th_dat_spo":(null|\{[^}]*?\})/g;
     let match;
 
     while ((match = sponsoredPattern.exec(allContent)) !== null) {
-      const isSponsored = match[1] !== 'null' && match[1].includes('SponsoredData');
-      const idMatch = match[0].match(/"id":"([^"]+)"/);
+      // th_dat_spo:null = organic, th_dat_spo:{...} = sponsored (any object means ad)
+      const isSponsored = match[1] !== 'null' && match[1].startsWith('{');
+      // Look backwards for Story ID
+      const contextStart = Math.max(0, match.index - 500);
+      const context = allContent.substring(contextStart, match.index + match[0].length);
+      const idMatch = context.match(/"id":"(S:_I[^"]+|UzpfS[^"]+)"/);
       const storyId = idMatch ? idMatch[1] : 'story_' + Object.keys(seenIds).length;
 
       if (!seenIds[storyId]) {
