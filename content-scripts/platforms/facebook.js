@@ -1,6 +1,7 @@
 /**
  * AttentionGuard - Facebook Platform Script
- * Parses embedded JSON data for reliable detection
+ * Parses embedded JSON data + intercepts network for real-time detection
+ * v2.0: Added fetch/XHR interception for scroll/infinite feed updates
  */
 
 (function() {
@@ -12,6 +13,8 @@
 
   const session = AG.createSession();
   const state = AG.createState();
+  state.networkIntercepted = false;
+  state.networkData = [];
 
   function parseEmbeddedData() {
     const scripts = document.querySelectorAll('script');
@@ -125,6 +128,161 @@
     return data;
   }
 
+  /**
+   * Parse network response text for stories (from GraphQL responses)
+   */
+  function parseNetworkForStories(text) {
+    const stories = [];
+    const seenIds = {};
+
+    // Get existing IDs to avoid duplicates
+    Object.keys(session.items).forEach(id => { seenIds[id] = true; });
+
+    // Pattern 1: Stories with th_dat_spo (sponsored indicator)
+    const sponsoredPattern = /"th_dat_spo":(null|\{[^}]*?\})/g;
+    let match;
+
+    while ((match = sponsoredPattern.exec(text)) !== null) {
+      const isSponsored = match[1] !== 'null' && match[1].startsWith('{');
+      const contextStart = Math.max(0, match.index - 500);
+      const context = text.substring(contextStart, match.index + match[0].length);
+      const idMatch = context.match(/"id":"(S:_I[^"]+|UzpfS[^"]+)"/);
+      const storyId = idMatch ? idMatch[1] : 'net_story_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+      if (!seenIds[storyId]) {
+        seenIds[storyId] = true;
+        stories.push({ id: storyId, isSponsored, source: 'network' });
+      }
+    }
+
+    // Pattern 2: post_id for additional coverage
+    const postIdPattern = /"post_id":"([^"]+)"/g;
+    while ((match = postIdPattern.exec(text)) !== null) {
+      if (!seenIds[match[1]]) {
+        seenIds[match[1]] = true;
+        stories.push({ id: match[1], isSponsored: false, source: 'network_post' });
+      }
+    }
+
+    return stories;
+  }
+
+  /**
+   * Parse network response for social context
+   */
+  function parseNetworkForSocialContext(text) {
+    const contexts = [];
+    const socialPattern = /"social_context"\s*:\s*\{[^}]*?"text"\s*:\s*"([^"]+)"/g;
+    let match;
+
+    while ((match = socialPattern.exec(text)) !== null) {
+      const id = AG.generateId('social', match[1]);
+      if (!session.items[id]) {
+        contexts.push(match[1]);
+      }
+    }
+
+    return contexts;
+  }
+
+  /**
+   * Process intercepted network response
+   */
+  function processNetworkResponse(text, source) {
+    if (!text || text.length < 100) return;
+
+    state.networkData.push({
+      timestamp: Date.now(),
+      source: source,
+      length: text.length
+    });
+
+    const newStories = parseNetworkForStories(text);
+    const newSocialContexts = parseNetworkForSocialContext(text);
+    let newCount = 0;
+
+    // Process new stories
+    newStories.forEach(story => {
+      const labels = [];
+      if (story.isSponsored) {
+        labels.push({
+          category: 'SPONSORED_POST',
+          text: 'Sponsored',
+          type: 'ad',
+          severity: 'critical'
+        });
+      }
+      const classification = story.isSponsored ? AG.CLASSIFICATION.AD : AG.CLASSIFICATION.ORGANIC;
+      if (AG.addToSession(session, story.id, classification, labels)) {
+        newCount++;
+      }
+    });
+
+    // Process new social contexts
+    newSocialContexts.forEach(ctx => {
+      const id = AG.generateId('social', ctx);
+      const labels = [{
+        category: 'SOCIAL_CONTEXT',
+        text: ctx,
+        type: 'social',
+        severity: 'medium'
+      }];
+      if (AG.addToSession(session, id, AG.CLASSIFICATION.SOCIAL, labels)) {
+        newCount++;
+      }
+    });
+
+    // Report and log if we found new content
+    if (newCount > 0) {
+      AG.reportStats(PLATFORM, session);
+
+      if (state.debounceTimer) clearTimeout(state.debounceTimer);
+      state.debounceTimer = setTimeout(() => {
+        AG.log('Facebook', COLOR,
+          '[Network +' + newCount + ']',
+          'Ads:', session.ads,
+          '| Algo:', session.algorithmic || 0,
+          '| Social:', session.social,
+          '| Organic:', session.organic,
+          '| Rate:', AG.getManipulationRate(session) + '%'
+        );
+      }, 500);
+    }
+  }
+
+  /**
+   * Setup fetch and XHR interception for real-time updates
+   * CRITICAL: Must inject into page's main world because content scripts run in isolated world
+   * Uses external script file to bypass CSP restrictions
+   */
+  function setupNetworkInterception() {
+    if (state.networkIntercepted) return;
+    state.networkIntercepted = true;
+
+    // Inject external script file into main world (bypasses CSP)
+    const script = document.createElement('script');
+    script.src = chrome.runtime.getURL('content-scripts/injected/facebook-interceptor.js');
+    script.onload = function() {
+      this.remove();
+      AG.log('Facebook', COLOR, 'Network interceptor injected successfully');
+    };
+    script.onerror = function() {
+      console.error('[AttentionGuard] Failed to inject network interceptor');
+      this.remove();
+    };
+    (document.head || document.documentElement).appendChild(script);
+
+    // Listen for messages from injected script
+    window.addEventListener('message', event => {
+      if (event.source !== window) return;
+      if (event.data && event.data.type === 'AG_NETWORK_DATA') {
+        processNetworkResponse(event.data.text, event.data.source);
+      }
+    });
+
+    AG.log('Facebook', COLOR, 'Network interception enabled (external script)');
+  }
+
   function scan() {
     const jsonData = parseEmbeddedData();
     let newCount = 0;
@@ -222,6 +380,9 @@
     // Notify background that Facebook is active
     AG.notifyActive(PLATFORM);
 
+    // *** CRITICAL: Enable network interception FIRST for real-time scroll detection ***
+    setupNetworkInterception();
+
     // MutationObserver for DOM changes (new posts rendered)
     const observer = new MutationObserver(mutations => {
       let shouldScan = false;
@@ -232,7 +393,7 @@
             if (node.nodeType === 1) {
               // Trigger on: scripts, large content, OR feed-like elements
               if (node.tagName === 'SCRIPT' ||
-                  (node.textContent && node.textContent.length > 200) ||
+                  (node.textContent && node.textContent.length > 500) ||
                   node.getAttribute?.('role') === 'article' ||
                   node.querySelector?.('[role="article"]') ||
                   node.getAttribute?.('data-pagelet')?.includes('Feed')) {
@@ -255,18 +416,10 @@
     state.observer = { stop: () => observer.disconnect() };
     state.isWatching = true;
 
-    // Scroll listener as backup - Facebook loads content on scroll
-    let scrollTimer = null;
-    const handleScroll = () => {
-      if (scrollTimer) clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(scan, 2000);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Periodic scan every 30 seconds as fallback (network interception handles most updates now)
+    state.periodicTimer = setInterval(scan, 30000);
 
-    // Periodic scan every 10 seconds as fallback
-    state.periodicTimer = setInterval(scan, 10000);
-
-    AG.log('Facebook', COLOR, 'Real-time watching started (DOM + Scroll + Periodic)');
+    AG.log('Facebook', COLOR, 'Real-time watching started (Network + DOM + Periodic)');
     scan();
   }
 

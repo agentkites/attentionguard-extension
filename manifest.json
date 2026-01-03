@@ -115,7 +115,7 @@
   },
 
   "web_accessible_resources": [{
-    "resources": ["assets/icons/*", "assets/platforms/*"],
+    "resources": ["assets/icons/*", "assets/platforms/*", "content-scripts/injected/*"],
     "matches": ["<all_urls>"]
   }]
 }
