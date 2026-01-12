@@ -98,10 +98,23 @@
           session.organic++;
       }
 
-      // Update category counts
+      // Update category counts - only count labels matching the final classification
+      // This prevents social signals on ads from inflating the Echoed category
+      const classificationTypeMap = {
+        ad: this.CLASSIFICATION.AD,
+        algorithmic: this.CLASSIFICATION.ALGORITHMIC,
+        social: this.CLASSIFICATION.SOCIAL,
+        organic: this.CLASSIFICATION.ORGANIC
+      };
+
       labels.forEach(function(label) {
-        session.categories[label.category] = (session.categories[label.category] || 0) + 1;
-      });
+        // Only count this label if its type matches the final classification
+        // OR if it's an ad (always count ad labels on ad posts)
+        const labelClassification = classificationTypeMap[label.type] || this.CLASSIFICATION.ORGANIC;
+        if (labelClassification === classification) {
+          session.categories[label.category] = (session.categories[label.category] || 0) + 1;
+        }
+      }, this);
 
       // Update severity counts
       const severity = this.getHighestSeverity(labels);

@@ -11,23 +11,28 @@
   const COLOR = '#0A66C2';
 
   const PATTERNS = [
+    // Ads
     { pattern: /Promoted/i, category: 'ADVERTISING', type: 'ad', severity: 'critical' },
     { pattern: /Sponsored/i, category: 'ADVERTISING', type: 'ad', severity: 'critical' },
+    // Algorithmic
     { pattern: /^Suggested$/m, category: 'SUGGESTED', type: 'algorithmic', severity: 'high' },
     { pattern: /Suggested for you/i, category: 'SUGGESTED', type: 'algorithmic', severity: 'high' },
     { pattern: /Recommended for you/i, category: 'RECOMMENDED', type: 'algorithmic', severity: 'high' },
+    { pattern: /Trending (pages|posts|topics)/i, category: 'TRENDING', type: 'algorithmic', severity: 'medium' },
+    { pattern: /Jobs recommended for you/i, category: 'JOB_RECOMMENDATION', type: 'algorithmic', severity: 'medium' },
+    { pattern: /Based on your profile/i, category: 'PERSONALIZED', type: 'algorithmic', severity: 'high' },
+    { pattern: /People you may know/i, category: 'PEOPLE_SUGGESTION', type: 'algorithmic', severity: 'medium' },
+    // Social reactions
     { pattern: /likes this/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
     { pattern: /loves this/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
     { pattern: /finds this insightful/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
     { pattern: /finds this funny/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
     { pattern: /celebrates this/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
     { pattern: /supports this/i, category: 'SOCIAL_REACTION', type: 'social', severity: 'medium' },
+    // Social actions
     { pattern: /reposted/i, category: 'SOCIAL_REPOST', type: 'social', severity: 'medium' },
     { pattern: /commented on this/i, category: 'SOCIAL_COMMENT', type: 'social', severity: 'medium' },
-    { pattern: /connections follow/i, category: 'SOCIAL_GRAPH', type: 'social', severity: 'medium' },
-    { pattern: /Jobs recommended for you/i, category: 'JOB_RECOMMENDATION', type: 'algorithmic', severity: 'medium' },
-    { pattern: /Based on your profile/i, category: 'PERSONALIZED', type: 'algorithmic', severity: 'high' },
-    { pattern: /People you may know/i, category: 'PEOPLE_SUGGESTION', type: 'algorithmic', severity: 'medium' }
+    { pattern: /connections follow/i, category: 'SOCIAL_GRAPH', type: 'social', severity: 'medium' }
   ];
 
   const session = AG.createSession();

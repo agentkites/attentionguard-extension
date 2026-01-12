@@ -50,58 +50,135 @@
           <span class="platform-icon" id="platformIcon"></span>
           <span class="platform-name" id="platformName">Platform</span>
         </div>
-        <span class="session-time" id="sessionTime">0:00</span>
+        <div class="header-right-info">
+          <span class="total-badge" id="totalBadge">0 posts</span>
+          <span class="session-time" id="sessionTime">0:00</span>
+        </div>
       </div>
 
-      <!-- Main Score -->
-      <div class="main-score" id="mainScore">
-        <div class="score-circle">
-          <svg viewBox="0 0 100 100">
-            <circle class="score-bg" cx="50" cy="50" r="45"></circle>
-            <circle class="score-progress" id="scoreProgress" cx="50" cy="50" r="45"></circle>
-          </svg>
-          <div class="score-value">
-            <span class="score-number" id="scoreNumber">0</span>
-            <span class="score-percent">%</span>
+      <!-- Feed Composition Section -->
+      <div class="feed-composition">
+        <div class="composition-header">
+          <h3>Feed Composition</h3>
+        </div>
+
+        <!-- Pie Chart + Legend -->
+        <div class="composition-main">
+          <!-- Pie Chart -->
+          <div class="pie-chart-wrapper">
+            <div class="pie-chart" id="pieChart">
+              <div class="pie-center">
+                <span class="pie-value" id="intentionalPercent">0%</span>
+                <span class="pie-label">Intentional</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend with expandable Tier 2 -->
+          <div class="composition-legend">
+            <!-- Intentional -->
+            <div class="legend-item" data-category="organic">
+              <div class="legend-row">
+                <span class="legend-color intentional"></span>
+                <div class="legend-text">
+                  <span class="legend-name">Intentional</span>
+                  <span class="legend-desc">From accounts you follow</span>
+                </div>
+                <span class="legend-value" id="intentionalValue">0%</span>
+                <span class="legend-expand" id="expandIntentional">▶</span>
+              </div>
+              <div class="legend-tier2 collapsed" id="tier2Intentional">
+                <div class="tier2-count"><span id="organicCount">0</span> posts from your subscriptions and connections</div>
+              </div>
+            </div>
+
+            <!-- Algorithmic -->
+            <div class="legend-item" data-category="algorithmic">
+              <div class="legend-row">
+                <span class="legend-color algorithmic"></span>
+                <div class="legend-text">
+                  <span class="legend-name">Algorithmic</span>
+                  <span class="legend-desc">Pushed by the platform's AI</span>
+                </div>
+                <span class="legend-value" id="algorithmicValue">0%</span>
+                <span class="legend-expand" id="expandAlgorithmic">▶</span>
+              </div>
+              <div class="legend-tier2 collapsed" id="tier2Algorithmic">
+                <div class="tier2-header">
+                  <span id="algoCount">0</span> posts selected by algorithms
+                </div>
+                <div class="tier2-subtitle">Detected signals:</div>
+                <div class="tier2-breakdown" id="algorithmicBreakdown">
+                  <!-- Platform-specific breakdown inserted by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Echoed -->
+            <div class="legend-item" data-category="social">
+              <div class="legend-row">
+                <span class="legend-color echoed"></span>
+                <div class="legend-text">
+                  <span class="legend-name">Echoed</span>
+                  <span class="legend-desc">Shown because others engaged</span>
+                </div>
+                <span class="legend-value" id="echoedValue">0%</span>
+                <span class="legend-expand" id="expandEchoed">▶</span>
+              </div>
+              <div class="legend-tier2 collapsed" id="tier2Echoed">
+                <div class="tier2-header">
+                  <span id="socialCount">0</span> posts via network activity
+                </div>
+                <div class="tier2-subtitle">Detected signals:</div>
+                <div class="tier2-breakdown" id="echoedBreakdown">
+                  <!-- Platform-specific breakdown inserted by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Sponsored -->
+            <div class="legend-item" data-category="ads">
+              <div class="legend-row">
+                <span class="legend-color sponsored"></span>
+                <div class="legend-text">
+                  <span class="legend-name">Sponsored</span>
+                  <span class="legend-desc">Paid advertisements</span>
+                </div>
+                <span class="legend-value" id="sponsoredValue">0%</span>
+                <span class="legend-expand" id="expandSponsored">▶</span>
+              </div>
+              <div class="legend-tier2 collapsed" id="tier2Sponsored">
+                <div class="tier2-header">
+                  <span id="adsCount">0</span> paid placements
+                </div>
+                <div class="tier2-subtitle">Detected signals:</div>
+                <div class="tier2-breakdown" id="sponsoredBreakdown">
+                  <!-- Platform-specific breakdown inserted by JS -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="score-label">INFLUENCED</div>
       </div>
 
-      <!-- Stats Cards (clickable) -->
-      <div class="stats-grid">
-        <div class="stat-card ads" data-category="ads">
-          <span class="stat-icon">🎯</span>
-          <span class="stat-value" id="adsCount">0</span>
-          <span class="stat-label">Ads</span>
+      <!-- Feed Health Bar -->
+      <div class="feed-health">
+        <div class="health-header">
+          <span class="health-title">Feed Health</span>
+          <span class="health-score" id="healthScore">0%</span>
         </div>
-        <div class="stat-card algo" data-category="algorithmic">
-          <span class="stat-icon">🤖</span>
-          <span class="stat-value" id="algoCount">0</span>
-          <span class="stat-label">Algorithmic</span>
+        <div class="health-bar">
+          <div class="health-fill" id="healthFill"></div>
         </div>
-        <div class="stat-card social" data-category="social">
-          <span class="stat-icon">👥</span>
-          <span class="stat-value" id="socialCount">0</span>
-          <span class="stat-label">Social</span>
-        </div>
-        <div class="stat-card organic" data-category="organic">
-          <span class="stat-icon">✓</span>
-          <span class="stat-value" id="organicCount">0</span>
-          <span class="stat-label">Organic</span>
-        </div>
+        <p class="health-desc" id="healthDesc">Analyzing your feed...</p>
       </div>
 
-      <!-- Progress Bar -->
-      <div class="progress-section">
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="progress-labels">
-          <span>Influenced: <strong id="manipulatedCount">0</strong></span>
-          <span>Total: <strong id="totalCount">0</strong></span>
-        </div>
-      </div>
+      <!-- Hidden legacy elements for JS compatibility -->
+      <span id="scoreNumber" style="display:none;">0</span>
+      <span id="manipulatedCount" style="display:none;">0</span>
+      <span id="totalCount" style="display:none;">0</span>
+      <div id="progressFill" style="display:none;"></div>
+      <circle id="scoreProgress" style="display:none;"></circle>
 
       <!-- Action Buttons -->
       <div class="action-buttons">

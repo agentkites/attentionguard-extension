@@ -22,8 +22,7 @@ const PLATFORM_CATEGORIES = {
       title: 'Reddit Ads',
       description: 'Paid promotional content in your Reddit feed.',
       categories: [
-        { name: 'Promoted Posts', severity: 'critical', desc: 'Paid ads that look like regular posts' },
-        { name: 'Sponsored Content', severity: 'critical', desc: 'Brand partnerships marked as sponsored' }
+        { name: 'Promoted/Sponsored', severity: 'critical', desc: 'Paid ads and brand partnerships' }
       ]
     },
     algorithmic: {
@@ -62,8 +61,7 @@ const PLATFORM_CATEGORIES = {
       title: 'LinkedIn Ads',
       description: 'Paid promotional content targeting professionals.',
       categories: [
-        { name: 'Promoted', severity: 'critical', desc: 'Paid posts in your feed' },
-        { name: 'Sponsored', severity: 'critical', desc: 'Company-sponsored content' }
+        { name: 'Promoted/Sponsored', severity: 'critical', desc: 'Paid posts and company-sponsored content' }
       ]
     },
     algorithmic: {
@@ -73,6 +71,7 @@ const PLATFORM_CATEGORIES = {
       categories: [
         { name: 'Suggested For You', severity: 'high', desc: 'AI-recommended posts' },
         { name: 'Recommended For You', severity: 'high', desc: 'Based on your profile data' },
+        { name: 'Trending', severity: 'medium', desc: 'Trending pages/posts in your network' },
         { name: 'Based On Your Profile', severity: 'high', desc: 'Personalized to your work history' },
         { name: 'Jobs Recommended', severity: 'medium', desc: 'Job listings pushed to you' },
         { name: 'People You May Know', severity: 'medium', desc: 'Connection suggestions' }
@@ -107,8 +106,7 @@ const PLATFORM_CATEGORIES = {
       title: 'YouTube Ads',
       description: 'Paid video promotions and sponsored content.',
       categories: [
-        { name: 'Video Ads', severity: 'critical', desc: 'Pre-roll and mid-roll advertisements' },
-        { name: 'Sponsored Cards', severity: 'critical', desc: 'Product placements and promotions' }
+        { name: 'Sponsored', severity: 'critical', desc: 'Pre-roll, mid-roll ads and sponsored content' }
       ]
     },
     algorithmic: {
@@ -116,9 +114,8 @@ const PLATFORM_CATEGORIES = {
       title: 'YouTube Algorithm',
       description: 'Videos pushed by YouTube to maximize watch time, not necessarily what you want.',
       categories: [
-        { name: 'Recommended', severity: 'high', desc: 'AI-suggested videos in sidebar and home' },
-        { name: 'YouTube Shorts', severity: 'medium', desc: 'Addictive short-form video format' },
-        { name: 'Up Next', severity: 'high', desc: 'Auto-play suggestions to keep you watching' }
+        { name: 'Recommended/Up Next', severity: 'high', desc: 'AI-suggested videos on home and sidebar' },
+        { name: 'YouTube Shorts', severity: 'medium', desc: 'Addictive short-form video format' }
       ]
     },
     social: {
@@ -273,8 +270,7 @@ const PLATFORM_CATEGORIES = {
       title: 'Twitter/X Ads',
       description: 'Promoted tweets and accounts.',
       categories: [
-        { name: 'Promoted Tweets', severity: 'critical', desc: 'Paid tweet placements' },
-        { name: 'Promoted Accounts', severity: 'critical', desc: 'Paid follow suggestions' }
+        { name: 'Promoted/Ad', severity: 'critical', desc: 'Paid tweet placements and promotions' }
       ]
     },
     algorithmic: {
@@ -373,7 +369,26 @@ const elements = {
   modalClose: document.getElementById('modalClose'),
   requestSection: document.getElementById('requestSection'),
   currentSiteName: document.getElementById('currentSiteName'),
-  requestBtn: document.getElementById('requestBtn')
+  requestBtn: document.getElementById('requestBtn'),
+  // Feed Composition elements
+  totalBadge: document.getElementById('totalBadge'),
+  pieChart: document.getElementById('pieChart'),
+  intentionalPercent: document.getElementById('intentionalPercent'),
+  intentionalValue: document.getElementById('intentionalValue'),
+  algorithmicValue: document.getElementById('algorithmicValue'),
+  echoedValue: document.getElementById('echoedValue'),
+  sponsoredValue: document.getElementById('sponsoredValue'),
+  healthScore: document.getElementById('healthScore'),
+  healthFill: document.getElementById('healthFill'),
+  healthDesc: document.getElementById('healthDesc'),
+  // Tier 2 containers
+  tier2Intentional: document.getElementById('tier2Intentional'),
+  tier2Algorithmic: document.getElementById('tier2Algorithmic'),
+  tier2Echoed: document.getElementById('tier2Echoed'),
+  tier2Sponsored: document.getElementById('tier2Sponsored'),
+  algorithmicBreakdown: document.getElementById('algorithmicBreakdown'),
+  echoedBreakdown: document.getElementById('echoedBreakdown'),
+  sponsoredBreakdown: document.getElementById('sponsoredBreakdown')
 };
 
 let currentPlatform = null;
@@ -393,6 +408,417 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.body.setAttribute('data-theme', newTheme);
   localStorage.setItem('attentionguard-theme', newTheme);
+}
+
+// ============================================
+// FEED COMPOSITION HELPERS
+// ============================================
+
+/**
+ * Gets the health class based on intentional percentage
+ */
+function getHealthClass(percent) {
+  if (percent >= 70) return 'excellent';
+  if (percent >= 50) return 'good';
+  if (percent >= 30) return 'moderate';
+  if (percent >= 15) return 'poor';
+  return 'toxic';
+}
+
+/**
+ * Gets the health description based on intentional percentage
+ */
+function getHealthDescription(percent) {
+  if (percent >= 70) return 'Great! Most of your feed is content you intentionally chose.';
+  if (percent >= 50) return 'Good balance. About half your feed is intentional.';
+  if (percent >= 30) return 'The algorithm is curating more than you asked for.';
+  if (percent >= 15) return 'Your feed is heavily curated by algorithms.';
+  return 'Your feed is almost entirely algorithm-driven.';
+}
+
+/**
+ * Updates the pie chart with CSS custom properties
+ */
+function updatePieChart(intentionalPct, curatedPct, socialPct, sponsoredPct) {
+  if (!elements.pieChart) return;
+
+  // Calculate cumulative degrees
+  const intentionalDeg = (intentionalPct / 100) * 360;
+  const curatedDeg = intentionalDeg + (curatedPct / 100) * 360;
+  const socialDeg = curatedDeg + (socialPct / 100) * 360;
+
+  // Set CSS custom properties
+  elements.pieChart.style.setProperty('--deg-intentional', intentionalDeg + 'deg');
+  elements.pieChart.style.setProperty('--deg-curated', curatedDeg + 'deg');
+  elements.pieChart.style.setProperty('--deg-social', socialDeg + 'deg');
+}
+
+/**
+ * Maps category names to Tier 1 (algorithmic, echoed, sponsored)
+ * Returns null for organic/intentional categories
+ */
+function mapCategoryToTier1(category) {
+  const cat = (category || '').toLowerCase();
+
+  // Sponsored (Ads)
+  if (cat.includes('ad') || cat.includes('sponsor') || cat.includes('promot') ||
+      cat.includes('paid') || cat.includes('partner')) {
+    return 'sponsored';
+  }
+
+  // Echoed (Social/Network-driven)
+  if (cat.includes('social') || cat.includes('friend') || cat.includes('like') ||
+      cat.includes('comment') || cat.includes('repost') || cat.includes('share') ||
+      cat.includes('follow') || cat.includes('mutual') || cat.includes('connection') ||
+      cat.includes('react') || cat.includes('love') || cat.includes('insightful')) {
+    return 'echoed';
+  }
+
+  // Intentional (Organic)
+  if (cat.includes('organic') || cat.includes('subscrib') || cat.includes('home_feed') ||
+      cat === 'following' || cat === 'subscribed') {
+    return null; // Intentional
+  }
+
+  // Everything else is Algorithmic
+  return 'algorithmic';
+}
+
+/**
+ * Renders ALL platform labels with their detection counts (full transparency)
+ * Shows every label the platform can detect, even if count is 0
+ */
+function renderCategoryBreakdown(container, detectedCategories, tier1Key) {
+  if (!container) return;
+
+  // Clear existing content
+  container.textContent = '';
+
+  // Get platform-specific labels from PLATFORM_CATEGORIES
+  var platformId = currentPlatform ? currentPlatform.id : null;
+  var platformConfig = platformId ? PLATFORM_CATEGORIES[platformId] : null;
+
+  // Map tier1Key to PLATFORM_CATEGORIES key
+  var platformCategoryKey = tier1Key;
+  if (tier1Key === 'algorithmic') platformCategoryKey = 'algorithmic';
+  if (tier1Key === 'echoed') platformCategoryKey = 'social';
+  if (tier1Key === 'sponsored') platformCategoryKey = 'ads';
+
+  var categoryConfig = platformConfig ? platformConfig[platformCategoryKey] : null;
+
+  if (!categoryConfig || !categoryConfig.categories) {
+    // No platform-specific config, show detected ones only
+    renderDetectedOnly(container, detectedCategories, tier1Key);
+    return;
+  }
+
+  // Show ALL labels for this platform with counts
+  categoryConfig.categories.forEach(function(catInfo) {
+    // Find count for this label (try to match by name)
+    var count = findCountForLabel(detectedCategories, catInfo.name);
+
+    var div = document.createElement('div');
+    div.className = 'tier2-item' + (count === 0 ? ' tier2-item-zero' : '');
+
+    // Severity badge
+    var severitySpan = document.createElement('span');
+    severitySpan.className = 'tier2-severity ' + catInfo.severity;
+    severitySpan.textContent = catInfo.severity.charAt(0).toUpperCase();
+    severitySpan.title = catInfo.severity + ' severity';
+
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'tier2-item-name';
+    nameSpan.textContent = catInfo.name;
+    nameSpan.title = catInfo.desc; // Show description on hover
+
+    var countSpan = document.createElement('span');
+    countSpan.className = 'tier2-item-count' + (count === 0 ? ' zero' : '');
+    countSpan.textContent = count;
+
+    div.appendChild(severitySpan);
+    div.appendChild(nameSpan);
+    div.appendChild(countSpan);
+    container.appendChild(div);
+  });
+}
+
+/**
+ * Maps detected category codes to platform label names
+ * This mapping aligns content-script category names with popup display names
+ * Based on actual category names from platform/*.js content scripts
+ */
+var CATEGORY_MAPPINGS = {
+  // === SHARED ACROSS PLATFORMS ===
+  'ADVERTISING': ['Promoted/Sponsored', 'Promoted/Ad', 'Sponsored', 'Sponsored Posts', 'Sponsored Products', 'Sponsored Brands'],
+
+  // === LINKEDIN ===
+  'SUGGESTED': ['Suggested For You', 'Suggested', 'Suggested Topics'],
+  'RECOMMENDED': ['Recommended For You', 'Recommended/Up Next'],
+  'PERSONALIZED': ['Based On Your Profile', 'Suggested For You'],
+  'JOB_RECOMMENDATION': ['Jobs Recommended'],
+  'PEOPLE_SUGGESTION': ['People You May Know'],
+  'SOCIAL_REACTION': ['X Likes This', 'X Loves This', 'X Finds Insightful', 'X Finds Funny', 'X Celebrates This', 'X Supports This'],
+  'SOCIAL_REPOST': ['X Reposted', 'X Retweeted'],
+  'SOCIAL_COMMENT': ['X Commented'],
+  'SOCIAL_GRAPH': ['Connections Follow', 'Because You Follow', 'X Follows'],
+
+  // === LINKEDIN (additional) ===
+  'TRENDING': ['Trending'],
+
+  // === REDDIT ===
+  'GEO_TARGETING': ['Popular Near You'],
+  'BEHAVIORAL_TRACKING': ['Because You Visited'],
+  'SIMILAR_CONTENT': ['Similar to r/...'],
+  'RELATED_CONTENT': ['Similar to r/...'],
+  'ORGANIC': ['Subscribed Subreddits', 'Home Feed', 'Following Feed', 'Your Subscriptions', 'Following Timeline', 'Friends Posts', 'Followed Pages'],
+
+  // === TWITTER/X ===
+  'SOCIAL_LIKE': ['X Liked'],
+  'SOCIAL_RETWEET': ['X Retweeted'],
+  'SOCIAL_REPLY': ['X Replied'],
+  'SOCIAL_FOLLOW': ['X Follows', 'Who To Follow'],
+  'SOCIAL_MULTIPLE': ['X Liked', 'X Retweeted'],
+  'ALGORITHM_SELECTED': ['For You Feed'],
+
+  // === FACEBOOK ===
+  'TH_DAT_SPO': ['Sponsored Posts'],
+  'SIDE_AD': ['Side Ads'],
+  'SUGGESTED_PAGE': ['Suggested For You', 'Suggested Follows'],
+  'SUGGESTED_FOLLOW': ['Suggested Follows'],
+  'PYMK': ['People You May Know'],
+  'REELS': ['Reels'],
+  'SOCIAL_PROOF': ['Social Proof'],
+  'FOMO': ['FOMO/Urgency'],
+  'VARIABLE_REWARD': ['Variable Rewards'],
+  'AUTOPLAY': ['Autoplay'],
+  'INFINITE_SCROLL': ['Infinite Scroll'],
+  'FRIEND_LIKED': ['Friend Liked'],
+  'FRIEND_COMMENTED': ['Friend Commented'],
+  'SOCIAL_CONTEXT': ['Social Context', 'Mutual Friends', 'Seen By'],
+  'MEMORIES': ['Reminders'],
+  'FRIEND_REQUEST': ['Friend Requests'],
+
+  // === INSTAGRAM ===
+  'SPONSORED_POST': ['Sponsored Posts'],
+  'SPONSORED_STORY': ['Sponsored Stories'],
+  'EXPLORE': ['Explore Page'],
+  'FROM_FOLLOWING': ['Following Feed', 'Stories'],
+  'ACTIVITY_STATUS': ['Activity Status'],
+
+  // === YOUTUBE ===
+  'VIDEO_AD': ['Video Ads'],
+  'SPONSORED_CARD': ['Sponsored Cards'],
+  'SHORTS': ['YouTube Shorts'],
+  'COMMUNITY': ['Community Posts'],
+  'SUBSCRIBED': ['Subscribed Channels', 'Subscription Feed'],
+
+  // === AMAZON ===
+  'SPONSORED_PRODUCT': ['Sponsored Products'],
+  'SPONSORED_BRAND': ['Sponsored Brands'],
+  'PRICE_ANCHOR': ['Price Anchoring'],
+  'SCARCITY': ['Only X Left'],
+  'URGENCY': ['Order Within X Hours', 'Limited Time Deal'],
+  'COUPON': ['Coupon Prompts'],
+  'SEARCH_RESULT': ['Search Results'],
+  'DIRECT_NAV': ['Direct Navigation']
+};
+
+/**
+ * Tries to find a count for a platform label from detected categories
+ */
+function findCountForLabel(detectedCategories, labelName) {
+  if (!detectedCategories) return 0;
+
+  var totalCount = 0;
+
+  for (var cat in detectedCategories) {
+    if (detectedCategories.hasOwnProperty(cat)) {
+      var catUpper = cat.toUpperCase();
+      var catLower = cat.toLowerCase().replace(/_/g, ' ');
+      var labelLower = labelName.toLowerCase();
+
+      // 1. Check exact mapping
+      var mappedLabels = CATEGORY_MAPPINGS[catUpper] || CATEGORY_MAPPINGS[cat];
+      if (mappedLabels) {
+        for (var i = 0; i < mappedLabels.length; i++) {
+          if (mappedLabels[i].toLowerCase() === labelLower) {
+            totalCount += detectedCategories[cat];
+            break;
+          }
+        }
+        continue;
+      }
+
+      // 2. Check if detected category contains or matches label name
+      if (catLower.includes(labelLower) || labelLower.includes(catLower)) {
+        totalCount += detectedCategories[cat];
+        continue;
+      }
+
+      // 3. Fuzzy match - check word overlap
+      var catWords = catLower.split(/[\s_]+/);
+      var labelWords = labelLower.split(/[\s_]+/);
+      var matchFound = catWords.some(function(cw) {
+        return labelWords.some(function(lw) {
+          return cw.length > 3 && lw.length > 3 && (cw.includes(lw) || lw.includes(cw));
+        });
+      });
+
+      if (matchFound) {
+        totalCount += detectedCategories[cat];
+      }
+    }
+  }
+
+  return totalCount;
+}
+
+/**
+ * Fallback: render only detected categories (no platform config)
+ */
+function renderDetectedOnly(container, categories, tier1Filter) {
+  var items = [];
+  for (var cat in categories) {
+    if (categories.hasOwnProperty(cat) && mapCategoryToTier1(cat) === tier1Filter) {
+      items.push({ name: cat, count: categories[cat] });
+    }
+  }
+
+  items.sort(function(a, b) { return b.count - a.count; });
+
+  items.forEach(function(item) {
+    var div = document.createElement('div');
+    div.className = 'tier2-item';
+
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'tier2-item-name';
+    nameSpan.textContent = formatCategoryName(item.name);
+
+    var countSpan = document.createElement('span');
+    countSpan.className = 'tier2-item-count';
+    countSpan.textContent = item.count;
+
+    div.appendChild(nameSpan);
+    div.appendChild(countSpan);
+    container.appendChild(div);
+  });
+
+  if (items.length === 0) {
+    var emptyDiv = document.createElement('div');
+    emptyDiv.className = 'tier2-item tier2-item-zero';
+    emptyDiv.textContent = 'No signals detected';
+    container.appendChild(emptyDiv);
+  }
+}
+
+/**
+ * Formats category name for display
+ */
+function formatCategoryName(name) {
+  // Handle common patterns
+  return name
+    .replace(/_/g, ' ')
+    .replace(/([A-Z])/g, ' $1')
+    .trim()
+    .split(' ')
+    .map(function(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+/**
+ * Updates the Feed Composition UI
+ */
+function updateFeedComposition(session) {
+  const total = session.total || 0;
+  const ads = session.ads || 0;
+  const algo = session.algorithmic || 0;
+  const social = session.social || 0;
+  const organic = session.organic || 0;
+  const categories = session.categories || {};
+
+  // Calculate percentages
+  const intentionalPct = total > 0 ? Math.round((organic / total) * 100) : 0;
+  const curatedPct = total > 0 ? Math.round((algo / total) * 100) : 0;
+  const socialPct = total > 0 ? Math.round((social / total) * 100) : 0;
+  const sponsoredPct = total > 0 ? Math.round((ads / total) * 100) : 0;
+
+  // Update total badge
+  if (elements.totalBadge) {
+    elements.totalBadge.textContent = total + ' posts';
+  }
+
+  // Update pie chart
+  updatePieChart(intentionalPct, curatedPct, socialPct, sponsoredPct);
+
+  // Update center value
+  if (elements.intentionalPercent) {
+    elements.intentionalPercent.textContent = intentionalPct + '%';
+  }
+
+  // Update legend values
+  if (elements.intentionalValue) elements.intentionalValue.textContent = intentionalPct + '%';
+  if (elements.algorithmicValue) elements.algorithmicValue.textContent = curatedPct + '%';
+  if (elements.echoedValue) elements.echoedValue.textContent = socialPct + '%';
+  if (elements.sponsoredValue) elements.sponsoredValue.textContent = sponsoredPct + '%';
+
+  // Update Tier 2 breakdowns with actual category data
+  renderCategoryBreakdown(elements.algorithmicBreakdown, categories, 'algorithmic');
+  renderCategoryBreakdown(elements.echoedBreakdown, categories, 'echoed');
+  renderCategoryBreakdown(elements.sponsoredBreakdown, categories, 'sponsored');
+
+  // Update health section
+  const healthClass = getHealthClass(intentionalPct);
+  const healthDesc = getHealthDescription(intentionalPct);
+
+  if (elements.healthScore) {
+    elements.healthScore.textContent = intentionalPct + '%';
+    elements.healthScore.className = 'health-score ' + healthClass;
+  }
+
+  if (elements.healthFill) {
+    elements.healthFill.style.width = intentionalPct + '%';
+    elements.healthFill.className = 'health-fill ' + healthClass;
+  }
+
+  if (elements.healthDesc) {
+    elements.healthDesc.textContent = healthDesc;
+  }
+}
+
+/**
+ * Initialize legend expand/collapse handlers
+ */
+function initLegendHandlers() {
+  var legendItems = document.querySelectorAll('.legend-item');
+  legendItems.forEach(function(item) {
+    var row = item.querySelector('.legend-row');
+    if (row) {
+      row.addEventListener('click', function() {
+        var tier2 = item.querySelector('.legend-tier2');
+        var isExpanded = item.classList.contains('expanded');
+
+        // Collapse all others
+        legendItems.forEach(function(other) {
+          if (other !== item) {
+            other.classList.remove('expanded');
+            var otherTier2 = other.querySelector('.legend-tier2');
+            if (otherTier2) otherTier2.classList.add('collapsed');
+          }
+        });
+
+        // Toggle current
+        if (isExpanded) {
+          item.classList.remove('expanded');
+          if (tier2) tier2.classList.add('collapsed');
+        } else {
+          item.classList.add('expanded');
+          if (tier2) tier2.classList.remove('collapsed');
+        }
+      });
+    }
+  });
 }
 
 // Modal management - using safe DOM methods
@@ -491,6 +917,9 @@ async function init() {
 
   // Setup event listeners
   setupEventListeners();
+
+  // Setup Feed Composition legend handlers
+  initLegendHandlers();
 
   // Listen for tab changes
   chrome.tabs.onActivated.addListener(handleTabChange);
@@ -646,6 +1075,9 @@ function updateStats(session) {
     sessionStartTime = session.startTime;
   }
   updateSessionTime();
+
+  // Update Feed Composition UI
+  updateFeedComposition(session);
 }
 
 // Update session time display

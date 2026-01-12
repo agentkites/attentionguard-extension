@@ -682,3 +682,397 @@ body {
 .updating .score-number {
   animation: pulse 0.4s ease;
 }
+
+/* ============================================ */
+/* FEED COMPOSITION - PIE CHART & DRILL-DOWN   */
+/* ============================================ */
+
+/* Header Right Info */
+.header-right-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.total-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* Feed Composition Section */
+.feed-composition {
+  margin-bottom: 16px;
+}
+
+.composition-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.composition-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Pie Chart */
+.pie-chart-wrapper {
+  flex-shrink: 0;
+}
+
+.pie-chart {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-intentional, #22c55e) 0deg,
+    var(--color-intentional, #22c55e) var(--deg-intentional, 90deg),
+    var(--color-curated, #a855f7) var(--deg-intentional, 90deg),
+    var(--color-curated, #a855f7) var(--deg-curated, 180deg),
+    var(--color-social, #3b82f6) var(--deg-curated, 180deg),
+    var(--color-social, #3b82f6) var(--deg-social, 270deg),
+    var(--color-sponsored, #ef4444) var(--deg-social, 270deg),
+    var(--color-sponsored, #ef4444) 360deg
+  );
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .pie-chart {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85px;
+  height: 85px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pie-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #22c55e;
+  line-height: 1;
+}
+
+.pie-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 3px;
+}
+
+/* Composition Legend */
+.composition-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend-item {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  background: var(--bg-secondary);
+}
+
+.legend-item.expanded {
+  background: var(--bg-secondary);
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.legend-color.intentional { background: #22c55e; }
+.legend-color.algorithmic { background: #a855f7; }
+.legend-color.echoed { background: #3b82f6; }
+.legend-color.sponsored { background: #ef4444; }
+
+.legend-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.legend-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.legend-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.legend-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 32px;
+  text-align: right;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.legend-expand {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  width: 14px;
+  text-align: center;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.legend-item.expanded .legend-expand {
+  transform: rotate(90deg);
+}
+
+/* Tier 2 Drill-down */
+.legend-tier2 {
+  padding: 0 10px 10px 28px;
+}
+
+.legend-tier2.collapsed {
+  display: none;
+}
+
+.tier2-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.tier2-count span {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tier2-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tier2-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.tier2-item-name {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.tier2-item-count {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Feed Health Section */
+.feed-health {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.health-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.health-score {
+  font-size: 18px;
+  font-weight: 700;
+  color: #22c55e;
+  transition: color 0.3s ease;
+}
+
+.health-score.excellent { color: #22c55e; }
+.health-score.good { color: #84cc16; }
+.health-score.moderate { color: #eab308; }
+.health-score.poor { color: #f97316; }
+.health-score.toxic { color: #ef4444; }
+
+.health-bar {
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.health-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease, background 0.3s ease;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  width: 0%;
+}
+
+.health-fill.excellent { background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%); }
+.health-fill.good { background: linear-gradient(90deg, #84cc16 0%, #65a30d 100%); }
+.health-fill.moderate { background: linear-gradient(90deg, #eab308 0%, #ca8a04 100%); }
+.health-fill.poor { background: linear-gradient(90deg, #f97316 0%, #ea580c 100%); }
+.health-fill.toxic { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
+
+.health-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Pie Chart - no animation for cleaner look */
+
+/* ============================================ */
+/* TIER 2 FULL TRANSPARENCY - ALL LABELS       */
+/* ============================================ */
+
+/* Severity badge in tier2 items */
+.tier2-severity {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  min-width: 14px;
+  text-align: center;
+}
+
+.tier2-severity.critical {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+.tier2-severity.high {
+  background: #7c2d12;
+  color: #fed7aa;
+}
+
+.tier2-severity.medium {
+  background: #713f12;
+  color: #fef08a;
+}
+
+.tier2-severity.low {
+  background: #14532d;
+  color: #bbf7d0;
+}
+
+[data-theme="light"] .tier2-severity.critical {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+[data-theme="light"] .tier2-severity.high {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+[data-theme="light"] .tier2-severity.medium {
+  background: #fef08a;
+  color: #854d0e;
+}
+
+[data-theme="light"] .tier2-severity.low {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+/* Zero count items - dimmed appearance */
+.tier2-item.tier2-item-zero {
+  opacity: 0.5;
+}
+
+.tier2-item.tier2-item-zero:hover {
+  opacity: 0.7;
+}
+
+.tier2-item-count.zero {
+  opacity: 0.4;
+  background: transparent;
+}
+
+/* Tier2 header and subtitle */
+.tier2-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.tier2-header span {
+  font-weight: 700;
+}
+
+.tier2-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  margin-top: 8px;
+}
