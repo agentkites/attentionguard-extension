@@ -28,15 +28,12 @@ AttentionGuard is an open-source Chrome extension that reveals the hidden manipu
 
 ## Installation
 
-### From Chrome Web Store
-*Coming soon*
-
-### Manual Installation (Developer Mode)
-1. Download or clone this repository
+1. **Download** - Clone or [download ZIP](https://github.com/agentkites/attentionguard-extension/archive/refs/heads/main.zip) and extract it
 2. Open Chrome and go to `chrome://extensions/`
 3. Enable **Developer mode** (toggle in top right)
 4. Click **Load unpacked**
-5. Select the `attentionguard-extension` folder
+5. Select the extracted `attentionguard-extension` folder
+6. Pin the extension to your toolbar for easy access
 
 ## How It Works
 
