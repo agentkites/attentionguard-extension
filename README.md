@@ -98,12 +98,7 @@ attentionguard-extension/
 
 ## License
 
-This project is licensed under the **GNU General Public License v3.0** - see [LICENSE](LICENSE) for details.
-
-This means:
-- You can use, modify, and distribute this software
-- Any derivative works must also be open source under GPL v3
-- You must include the original copyright notice
+This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for details.
 
 ## Credits
 
