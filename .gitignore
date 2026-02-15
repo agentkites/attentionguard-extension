@@ -9,6 +9,7 @@ node_modules/
 *.swo
 .vscode/
 .idea/
+.claude/
 
 # Build outputs
 dist/
