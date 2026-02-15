@@ -15,6 +15,19 @@
     { pattern: /Suggested for you/i, category: 'SUGGESTED', type: 'algorithmic', severity: 'high' }
   ];
 
+  // Detect ads by checking for standalone "Ad" or "Sponsored" markers in spans/divs
+  function isAdPost(el) {
+    // Check for "Sponsored" in text (legacy)
+    if (/\bSponsored\b/i.test(el.innerText)) return true;
+    // Check for standalone "Ad" spans/divs (current Instagram layout)
+    var candidates = el.querySelectorAll('span, div');
+    for (var i = 0; i < candidates.length; i++) {
+      var t = candidates[i].textContent.trim();
+      if (t === 'Ad' && candidates[i].childElementCount === 0) return true;
+    }
+    return false;
+  }
+
   const session = AG.createSession();
   const state = AG.createState();
 
@@ -32,8 +45,8 @@
     const text = el.innerText;
     const labels = [];
 
-    // Check for sponsored
-    if (/\bSponsored\b/i.test(text)) {
+    // Check for ads (Sponsored or standalone "Ad" label)
+    if (isAdPost(el)) {
       labels.push({
         category: 'ADVERTISING',
         text: 'Sponsored',
@@ -55,9 +68,10 @@
     }
 
     // Check for follow button (means you don't follow = suggested)
+    // Instagram uses div[role="button"] in addition to <button>
     let hasFollowButton = false;
-    el.querySelectorAll('button').forEach(btn => {
-      if (/^Follow$/i.test(btn.innerText)) hasFollowButton = true;
+    el.querySelectorAll('button, [role="button"]').forEach(btn => {
+      if (/^Follow$/i.test(btn.textContent.trim())) hasFollowButton = true;
     });
 
     if (hasFollowButton) {

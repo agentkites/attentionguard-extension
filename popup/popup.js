@@ -239,7 +239,9 @@ const PLATFORM_CATEGORIES = {
         { name: 'Autoplay', severity: 'medium', desc: 'Videos that auto-play to hijack attention' },
         { name: 'Infinite Scroll', severity: 'medium', desc: 'Endless feed with no stopping point' },
         { name: 'Reminders', severity: 'low', desc: 'Birthday and memory reminders to pull you back' },
-        { name: 'Friend Requests', severity: 'low', desc: 'Friend suggestions in side feed' }
+        { name: 'Friend Requests', severity: 'low', desc: 'Friend suggestions in side feed' },
+        { name: 'Suggested Groups', severity: 'medium', desc: 'Group recommendations to increase engagement' },
+        { name: 'Watch Feed', severity: 'medium', desc: 'Video content pushed via Watch tab' }
       ]
     },
     social: {
@@ -583,20 +585,33 @@ var CATEGORY_MAPPINGS = {
   // === FACEBOOK ===
   'TH_DAT_SPO': ['Sponsored Posts'],
   'SIDE_AD': ['Side Ads'],
+  'SIDE_ADS': ['Side Ads'],
   'SUGGESTED_PAGE': ['Suggested For You', 'Suggested Follows'],
   'SUGGESTED_FOLLOW': ['Suggested Follows'],
+  'SUGGESTED_FOLLOWS': ['Suggested Follows'],
+  'SUGGESTED_GROUPS': ['Suggested Groups'],
   'PYMK': ['People You May Know'],
+  'PYMK_SIGNAL': ['People You May Know'],
+  'PEOPLE_YOU_MAY_KNOW': ['People You May Know'],
   'REELS': ['Reels'],
   'SOCIAL_PROOF': ['Social Proof'],
   'FOMO': ['FOMO/Urgency'],
+  'FOMO_URGENCY': ['FOMO/Urgency'],
   'VARIABLE_REWARD': ['Variable Rewards'],
+  'VARIABLE_REWARDS': ['Variable Rewards'],
   'AUTOPLAY': ['Autoplay'],
   'INFINITE_SCROLL': ['Infinite Scroll'],
   'FRIEND_LIKED': ['Friend Liked'],
   'FRIEND_COMMENTED': ['Friend Commented'],
-  'SOCIAL_CONTEXT': ['Social Context', 'Mutual Friends', 'Seen By'],
+  'SOCIAL_CONTEXT': ['Social Context'],
+  'MUTUAL_FRIENDS': ['Mutual Friends'],
+  'SEEN_BY': ['Seen By'],
   'MEMORIES': ['Reminders'],
+  'REMINDERS': ['Reminders'],
   'FRIEND_REQUEST': ['Friend Requests'],
+  'FRIEND_REQUESTS': ['Friend Requests'],
+  'FOLLOW_PROFILE': ['Suggested Follows'],
+  'WATCH_FEED': ['Watch Feed'],
 
   // === INSTAGRAM ===
   'SPONSORED_POST': ['Sponsored Posts'],

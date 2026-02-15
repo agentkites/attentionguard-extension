@@ -30,6 +30,10 @@
       'good_visits_on_subreddit': { category: 'BEHAVIORAL_TRACKING', type: 'algorithmic', severity: 'high' },
       'responsive_post_to_post': { category: 'RELATED_CONTENT', type: 'algorithmic', severity: 'medium' },
       'top_feed': { category: 'TRENDING', type: 'algorithmic', severity: 'low' },
+      'two_hop_time_on_subreddits_6hr': { category: 'BEHAVIORAL_TRACKING', type: 'algorithmic', severity: 'high' },
+      'geo_good_visits_posts': { category: 'GEO_TARGETING', type: 'algorithmic', severity: 'medium' },
+      'geo_explore_subreddits': { category: 'GEO_TARGETING', type: 'algorithmic', severity: 'medium' },
+      'responsivesimilar': { category: 'RELATED_CONTENT', type: 'algorithmic', severity: 'medium' },
       'home_feed': { category: 'ORGANIC', type: 'organic', severity: 'none' },
       'subreddit_page': { category: 'ORGANIC', type: 'organic', severity: 'none' }
     }
