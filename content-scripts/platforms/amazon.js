@@ -28,9 +28,13 @@
 
   function getPageType() {
     const path = window.location.pathname;
-    if (path.includes('/s') && window.location.search.includes('k=')) return 'search';
+    const search = window.location.search;
+    if ((path.includes('/s') && (search.includes('k=') || search.includes('rh='))) ||
+        path.includes('/s/')) return 'search';
     if (path.includes('/dp/') || path.includes('/gp/product/')) return 'product';
     if (path.includes('/cart')) return 'cart';
+    if (path.includes('/deal') || path.includes('/gp/goldbox') ||
+        path.includes('/gp/bestsellers')) return 'search';
     return 'home';
   }
 
@@ -134,7 +138,6 @@
     if (session.items[id]) return 0;
 
     const labels = [];
-    const pageText = document.body.innerText;
 
     // Price anchoring
     if (document.querySelector(SELECTORS.strikePrice)) {
@@ -146,13 +149,34 @@
       });
     }
 
-    // Urgency
-    if (PATTERNS.urgency.test(pageText)) {
+    // Urgency - check specific product page containers instead of document.body.innerText
+    // which forces an extremely expensive full-page layout reflow
+    const urgencyContainers = ['#availability', '#buybox', '#desktop_buybox',
+      '#centerCol', '#ppd', '#unifiedPrice_feature_div'];
+    let hasUrgency = false;
+    for (const sel of urgencyContainers) {
+      const container = document.querySelector(sel);
+      if (container && PATTERNS.urgency.test(container.textContent)) {
+        hasUrgency = true;
+        break;
+      }
+    }
+    if (hasUrgency) {
       labels.push({
         category: 'URGENCY',
         text: 'Urgency messaging',
         type: 'algorithmic',
         severity: 'high'
+      });
+    }
+
+    // Coupons on product page
+    if (document.querySelector(SELECTORS.coupon)) {
+      labels.push({
+        category: 'COUPON',
+        text: 'Coupon prompt',
+        type: 'algorithmic',
+        severity: 'low'
       });
     }
 
@@ -197,15 +221,21 @@
 
     const container = document.querySelector('#a-page') || document.body;
 
+    let mutationDebounce = null;
     const observer = new MutationObserver(() => {
-      const productCount = document.querySelectorAll(SELECTORS.searchResults).length;
-      if (productCount > state.lastCount || state.lastUrl !== window.location.href) {
-        state.lastCount = productCount;
-        state.lastUrl = window.location.href;
+      // Debounce the check itself to avoid querySelectorAll on every mutation
+      if (mutationDebounce) return;
+      mutationDebounce = setTimeout(() => {
+        mutationDebounce = null;
+        const productCount = document.querySelectorAll(SELECTORS.searchResults).length;
+        if (productCount > state.lastCount || state.lastUrl !== window.location.href) {
+          state.lastCount = productCount;
+          state.lastUrl = window.location.href;
 
-        if (state.debounceTimer) clearTimeout(state.debounceTimer);
-        state.debounceTimer = setTimeout(scan, 1000);
-      }
+          if (state.debounceTimer) clearTimeout(state.debounceTimer);
+          state.debounceTimer = setTimeout(scan, 1000);
+        }
+      }, 500);
     });
 
     observer.observe(container, { childList: true, subtree: true });

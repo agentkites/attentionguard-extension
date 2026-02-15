@@ -38,11 +38,18 @@
   const session = AG.createSession();
   const state = AG.createState();
 
+  // LinkedIn DOM selectors - updated for current LinkedIn layout
+  const POST_SELECTORS = [
+    '[data-view-name="feed-full-update"]',   // Current LinkedIn (2025+)
+    '[data-id^="urn:li:activity"]',           // Legacy fallback
+    '.occludable-update'                      // Legacy fallback
+  ];
+
   function getPosts() {
     const posts = [];
     const seen = {};
 
-    ['[data-id^="urn:li:activity"]', '.occludable-update'].forEach(sel => {
+    POST_SELECTORS.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         const id = el.getAttribute('data-id') || AG.generateId('li', el.innerText);
         if (!seen[id]) {
@@ -109,7 +116,7 @@
     const container = document.querySelector('main') || document.body;
     const watcher = AG.createWatcher({
       container,
-      selector: '[data-id^="urn:li:activity"], .occludable-update',
+      selector: POST_SELECTORS.join(', '),
       onNewContent: scan,
       debounceMs: 800
     });

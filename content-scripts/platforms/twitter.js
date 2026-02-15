@@ -41,14 +41,35 @@
     return Array.from(document.querySelectorAll('article[data-testid="tweet"]'));
   }
 
+  // Detect ads by checking for a standalone "Ad" or "Promoted" marker
+  // Twitter places the ad label on its own line right after the handle (line index 2)
+  function isAdTweet(el) {
+    const lines = el.innerText.split('\n');
+    // Ad marker appears on line 2 or 3 (after name + handle), as exact text
+    for (let i = 1; i <= Math.min(4, lines.length - 1); i++) {
+      const line = lines[i].trim();
+      if (line === 'Ad' || line === 'Promoted') return true;
+    }
+    // Also check for ad-specific spans as fallback
+    const spans = el.querySelectorAll('span');
+    for (let i = 0; i < spans.length; i++) {
+      const t = spans[i].textContent.trim();
+      // Only match standalone "Ad" spans (not inside longer text)
+      if ((t === 'Ad' || t === 'Promoted') && spans[i].childElementCount === 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function analyzeTweet(el) {
-    const id = AG.generateId('tweet', el.innerText);
     const text = el.innerText;
+    const id = AG.generateId('tweet', text);
     const firstLines = text.split('\n').slice(0, 6).join(' ');
     const labels = [];
 
-    // Check for ads
-    if (/\bAd\b/.test(firstLines) || /\bPromoted\b/i.test(firstLines)) {
+    // Check for ads using precise detection
+    if (isAdTweet(el)) {
       labels.push({
         category: 'ADVERTISING',
         text: 'Promoted tweet',
@@ -58,7 +79,7 @@
       return { id, labels, classification: AG.CLASSIFICATION.AD };
     }
 
-    // Check social context
+    // Check social context (Twitter may not always show this element)
     const socialCtx = el.querySelector('[data-testid="socialContext"]');
     if (socialCtx) {
       const socialText = socialCtx.innerText.trim();
