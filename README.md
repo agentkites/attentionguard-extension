@@ -6,17 +6,25 @@ AttentionGuard is an open-source Chrome extension that reveals the hidden manipu
 
 > Powered by [AgentKite](https://agentkite.com)
 
+<p align="center">
+  <img src="assets/screenshots/linkedin.png" width="250" alt="LinkedIn - 23% intentional, algorithmic breakdown showing Suggested For You, Recommended, Jobs" />
+  <img src="assets/screenshots/reddit.png" width="250" alt="Reddit - 59% intentional, algorithmic breakdown showing behavioral tracking and geo-targeting" />
+  <img src="assets/screenshots/youtube.png" width="250" alt="YouTube - 0% intentional, 97% algorithmically driven feed" />
+</p>
+
+<p align="center"><em>Real feed data from LinkedIn, Reddit, and YouTube. How much of your feed did you actually choose?</em></p>
+
 ## Supported Platforms
 
 | Platform | Detection Capabilities |
 |----------|----------------------|
 | **Reddit** | Promoted posts, algorithmic suggestions, geo-targeting, behavioral tracking |
 | **Twitter/X** | Ads, "For You" algorithm, social context (likes, retweets) |
-| **Facebook** | Sponsored posts, social proof signals |
+| **Facebook** | Sponsored posts, dark patterns (FOMO, social proof, variable rewards), side ads |
 | **Instagram** | Sponsored content, suggested posts, non-followed accounts |
-| **LinkedIn** | Promoted content, social reactions, job recommendations |
-| **YouTube** | Ads, recommended videos, subscription vs algorithm |
-| **Amazon** | Sponsored products, urgency tactics, price anchoring |
+| **LinkedIn** | Promoted content, social reactions, job recommendations, personalization |
+| **YouTube** | Ads, recommended videos, Shorts, subscription vs algorithm |
+| **Amazon** | Sponsored products, urgency tactics, price anchoring, coupon prompts |
 
 ## Installation
 
