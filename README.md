@@ -69,10 +69,14 @@ AttentionGuard runs **100% locally** in your browser:
 - No tracking of your browsing
 - All stats stored locally (session or persistent, your choice)
 
+## Request a New Platform
+
+Don't see your favorite site listed? When you visit an unsupported site, the extension shows a **"Request AttentionGuard for this site"** button. Click it to open a pre-filled GitHub issue — no setup needed. You can also [open one manually](https://github.com/agentkites/attentionguard-extension/issues/new?labels=platform-request).
+
 ## Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to:
-- Add support for new platforms
+- Add support for new platforms (check [platform requests](https://github.com/agentkites/attentionguard-extension/issues?q=label%3Aplatform-request) for sites users are asking for)
 - Improve detection patterns
 - Fix bugs and improve code
 
