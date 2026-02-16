@@ -4,7 +4,7 @@
 
 AttentionGuard is an open-source Chrome extension that reveals the hidden manipulation patterns on social media and e-commerce platforms. Watch as your feed fills with ads, algorithmic recommendations, and social signals - all tracked and visualized in real-time.
 
-> Powered by [AgentKite](https://agentkite.com)
+> Created and Maintained by [AgentKite](https://agentkite.com)
 
 <p align="center">
   <img src="assets/screenshots/linkedin.png" width="250" alt="LinkedIn - 23% intentional, algorithmic breakdown showing Suggested For You, Recommended, Jobs" />
@@ -99,7 +99,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ## Credits
 
-- Created by the [AgentKite](https://agentkite.com) team
+- Created and maintained by the [AgentKite](https://agentkite.com) team
 - Inspired by the need for transparency in algorithmic feeds
 
 ## Links
