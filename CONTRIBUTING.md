@@ -262,7 +262,7 @@ AG.log(platform, color, ...args)  // Branded console output
 
 ## Questions?
 
-Open an issue on GitHub or reach out to the AgentKite team.
+Open an issue on GitHub or reach out to the team at [hq@agentkite.com](mailto:hq@agentkite.com).
 
 ---
 
