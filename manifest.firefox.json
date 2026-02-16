@@ -1,0 +1,132 @@
+{
+  "manifest_version": 3,
+  "name": "AttentionGuard",
+  "description": "See how algorithms manipulate your feed in real-time. Open source, community-driven.",
+  "version": "1.0.0",
+  "author": "AgentKite",
+  "homepage_url": "https://github.com/agentkite/attentionguard",
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "*://*.reddit.com/*",
+    "*://*.twitter.com/*",
+    "*://*.x.com/*",
+    "*://*.facebook.com/*",
+    "*://*.instagram.com/*",
+    "*://*.linkedin.com/*",
+    "*://*.youtube.com/*",
+    "*://*.amazon.com/*",
+    "*://*.amazon.in/*",
+    "*://*.amazon.co.uk/*",
+    "*://*.amazon.de/*",
+    "*://*.amazon.fr/*",
+    "*://*.amazon.co.jp/*",
+    "*://*.amazon.ca/*",
+    "*://*.amazon.com.au/*",
+    "*://*.amazon.es/*",
+    "*://*.amazon.it/*",
+    "*://*.amazon.nl/*",
+    "*://*.amazon.com.br/*",
+    "*://*.amazon.com.mx/*",
+    "*://*.amazon.sg/*"
+  ],
+
+  "background": {
+    "scripts": ["background/service-worker.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.reddit.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/reddit.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.twitter.com/*", "*://*.x.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/twitter.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.facebook.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/facebook.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.instagram.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/instagram.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.linkedin.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/linkedin.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/youtube.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.amazon.com/*",
+        "*://*.amazon.in/*",
+        "*://*.amazon.co.uk/*",
+        "*://*.amazon.de/*",
+        "*://*.amazon.fr/*",
+        "*://*.amazon.co.jp/*",
+        "*://*.amazon.ca/*",
+        "*://*.amazon.com.au/*",
+        "*://*.amazon.es/*",
+        "*://*.amazon.it/*",
+        "*://*.amazon.nl/*",
+        "*://*.amazon.com.br/*",
+        "*://*.amazon.com.mx/*",
+        "*://*.amazon.sg/*"
+      ],
+      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/amazon.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "sidebar_action": {
+    "default_panel": "popup/popup.html",
+    "default_title": "AttentionGuard",
+    "default_icon": {
+      "16": "assets/icons/brain-cog-16.png",
+      "32": "assets/icons/brain-cog-32.png"
+    }
+  },
+
+  "action": {
+    "default_icon": {
+      "16": "assets/icons/brain-cog-16.png",
+      "32": "assets/icons/brain-cog-32.png",
+      "48": "assets/icons/brain-cog-48.png"
+    },
+    "default_title": "AttentionGuard - Click to open sidebar"
+  },
+
+  "icons": {
+    "16": "assets/icons/brain-cog-16.png",
+    "32": "assets/icons/brain-cog-32.png",
+    "48": "assets/icons/brain-cog-48.png",
+    "128": "assets/icons/brain-cog-128.png"
+  },
+
+  "web_accessible_resources": [{
+    "resources": ["assets/icons/*", "assets/platforms/*", "content-scripts/injected/*"],
+    "matches": ["<all_urls>"]
+  }],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "attentionguard@agentkite.com",
+      "strict_min_version": "115.0"
+    }
+  }
+}

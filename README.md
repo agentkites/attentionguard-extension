@@ -2,7 +2,7 @@
 
 **See how algorithms manipulate your feed in real-time.**
 
-AttentionGuard is an open-source Chrome extension that reveals the hidden manipulation patterns on social media and e-commerce platforms. Watch as your feed fills with ads, algorithmic recommendations, and social signals - all tracked and visualized in real-time.
+AttentionGuard is an open-source browser extension for **Chrome** and **Firefox** that reveals the hidden manipulation patterns on social media and e-commerce platforms. Watch as your feed fills with ads, algorithmic recommendations, and social signals - all tracked and visualized in real-time.
 
 > Created and Maintained by [AgentKite](https://agentkite.com)
 
@@ -28,12 +28,24 @@ AttentionGuard is an open-source Chrome extension that reveals the hidden manipu
 
 ## Installation
 
+### Chrome
+
 1. **Download** - Clone or [download ZIP](https://github.com/agentkites/attentionguard-extension/archive/refs/heads/main.zip) and extract it
 2. Open Chrome and go to `chrome://extensions/`
 3. Enable **Developer mode** (toggle in top right)
 4. Click **Load unpacked**
 5. Select the extracted `attentionguard-extension` folder
 6. Pin the extension to your toolbar for easy access
+
+### Firefox
+
+1. **Download** - Clone or [download ZIP](https://github.com/agentkites/attentionguard-extension/archive/refs/heads/main.zip) and extract it
+2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
+3. Click **Load Temporary Add-on...**
+4. Select the `manifest.firefox.json` file from the extracted folder
+5. The extension icon will appear in your toolbar
+
+> **Note:** Temporary add-ons are removed when Firefox restarts. For a permanent install, the extension will need to be signed via [addons.mozilla.org](https://addons.mozilla.org). Firefox 115+ is required.
 
 ## How It Works
 
@@ -69,14 +81,16 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to:
 1. Create a new file in `content-scripts/platforms/`
 2. Use the core framework (`window.AttentionGuard`)
 3. Define your detection patterns
-4. Add the platform to `manifest.json`
+4. Add the platform to `manifest.json` and `manifest.firefox.json`
 5. Submit a pull request!
 
 ## Architecture
 
 ```
 attentionguard-extension/
-├── manifest.json              # Extension config
+├── manifest.json              # Chrome extension manifest
+├── manifest.firefox.json      # Firefox extension manifest
+├── build.sh                   # Package for Chrome & Firefox
 ├── background/
 │   └── service-worker.js      # Icon state, message routing
 ├── content-scripts/

@@ -3,6 +3,9 @@
  * Manages icon state, side panel, and aggregates stats across tabs
  */
 
+// Browser detection: Firefox exposes the global `browser` object natively
+const IS_FIREFOX = typeof browser !== 'undefined' && !!browser.runtime?.getURL;
+
 // Platform detection patterns
 const PLATFORMS = {
   reddit: { pattern: /reddit\.com/i, color: '#FF4500', name: 'Reddit' },
@@ -45,7 +48,8 @@ function detectPlatform(url) {
 // Get storage API based on persistence setting
 async function getStorage() {
   const { settings } = await chrome.storage.local.get('settings');
-  return (settings?.persistSessions) ? chrome.storage.local : chrome.storage.session;
+  if (settings?.persistSessions) return chrome.storage.local;
+  return chrome.storage.session || chrome.storage.local;
 }
 
 // Get all sessions
@@ -194,13 +198,14 @@ async function handleMessage(message, sender) {
       await chrome.storage.local.set({ settings: { persistSessions: persist } });
 
       // Migrate data between storage types
+      const sessionStorage = chrome.storage.session || chrome.storage.local;
       if (!persist) {
         const { sessions } = await chrome.storage.local.get('sessions');
         if (sessions) {
-          await chrome.storage.session.set({ sessions });
+          await sessionStorage.set({ sessions });
         }
       } else {
-        const { sessions } = await chrome.storage.session.get('sessions');
+        const { sessions } = await sessionStorage.get('sessions');
         if (sessions) {
           await chrome.storage.local.set({ sessions });
         }
@@ -239,9 +244,13 @@ async function handleMessage(message, sender) {
   }
 }
 
-// Open side panel when extension icon is clicked
+// Open side panel (Chrome) or sidebar (Firefox) when extension icon is clicked
 chrome.action.onClicked.addListener(async (tab) => {
-  await chrome.sidePanel.open({ tabId: tab.id });
+  if (IS_FIREFOX) {
+    await browser.sidebarAction.open();
+  } else {
+    await chrome.sidePanel.open({ tabId: tab.id });
+  }
 });
 
 // Update icon when tab changes
@@ -301,10 +310,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   console.log('AttentionGuard installed');
   await chrome.storage.local.set({ settings: { persistSessions: false } });
 
-  // Enable side panel
-  await chrome.sidePanel.setOptions({
-    enabled: true
-  });
+  // Enable side panel (Chrome only; Firefox sidebar is always available via manifest)
+  if (!IS_FIREFOX && chrome.sidePanel) {
+    await chrome.sidePanel.setOptions({
+      enabled: true
+    });
+  }
 });
 
 console.log('AttentionGuard service worker loaded');
