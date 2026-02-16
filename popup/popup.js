@@ -1215,7 +1215,7 @@ function setupEventListeners() {
       // Open GitHub issues page with pre-filled info
       const issueTitle = encodeURIComponent('Request: Add AttentionGuard for ' + hostname);
       const issueBody = encodeURIComponent('**Website:** ' + hostname + '\n**URL:** ' + currentTabUrl + '\n\n**Why should we add this site?**\n(Please describe what manipulation patterns you notice on this site)');
-      const issueUrl = 'https://github.com/agentkite/attentionguard/issues/new?title=' + issueTitle + '&body=' + issueBody + '&labels=platform-request';
+      const issueUrl = 'https://github.com/agentkites/attentionguard-extension/issues/new?title=' + issueTitle + '&body=' + issueBody + '&labels=platform-request';
 
       chrome.tabs.create({ url: issueUrl });
 

@@ -118,8 +118,8 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ## Links
 
-- [GitHub Repository](https://github.com/agentkite/attentionguard)
-- [Report Issues](https://github.com/agentkite/attentionguard/issues)
+- [GitHub Repository](https://github.com/agentkites/attentionguard-extension)
+- [Report Issues](https://github.com/agentkites/attentionguard-extension/issues)
 - [AgentKite](https://agentkite.com)
 
 ---

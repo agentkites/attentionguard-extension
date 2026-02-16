@@ -4,7 +4,7 @@
   "description": "See how algorithms manipulate your feed in real-time. Open source, community-driven.",
   "version": "1.0.0",
   "author": "AgentKite",
-  "homepage_url": "https://github.com/agentkite/attentionguard",
+  "homepage_url": "https://github.com/agentkites/attentionguard-extension",
 
   "permissions": [
     "storage",
