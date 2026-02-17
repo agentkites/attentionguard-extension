@@ -66,14 +66,16 @@ const PLATFORMS = {
 
 ### Step 4: Add Platform Icon (Optional)
 
-Add an emoji or icon to `popup/popup.js`:
+Add an icon for your platform in `popup/popup.js`:
 
 ```javascript
 const PLATFORM_ICONS = {
   // ... existing icons
-  yourplatform: '🆕'
+  yourplatform: '../assets/platforms/yourplatform.png'
 };
 ```
+
+Place a small PNG icon (around 20x20px) in `assets/platforms/`.
 
 ## Platform Script Template
 

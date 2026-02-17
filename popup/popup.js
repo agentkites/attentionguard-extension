@@ -394,6 +394,7 @@ const elements = {
 };
 
 let currentPlatform = null;
+let currentSession = null;
 let updateInterval = null;
 let sessionStartTime = null;
 let currentTabUrl = null;

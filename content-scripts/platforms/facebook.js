@@ -367,7 +367,7 @@
         const signals = Object.entries(jsonData.manipulationSignals)
           .map(([cat, s]) => s.label + ':' + s.count)
           .join(', ');
-        console.log('%c  [Dark Patterns] ' + signals, 'color: #ff6b6b;');
+        AG.log('Facebook', COLOR, '[Dark Patterns]', signals);
       }
     }
 

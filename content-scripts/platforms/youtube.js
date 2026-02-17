@@ -324,17 +324,11 @@
 
     const videos = document.querySelectorAll(`${selector}, ${SELECTORS.shortsItems}`);
     let newCount = 0;
-    let debugHandles = [];
 
     videos.forEach(el => {
       const result = analyzeVideo(el);
       if (AG.addToSession(session, result.id, result.classification, result.labels)) {
         newCount++;
-        // Debug: collect first few channel handles
-        if (debugHandles.length < 3) {
-          const handle = getChannelHandle(el);
-          if (handle) debugHandles.push(handle);
-        }
       }
     });
 
@@ -351,11 +345,6 @@
         '| Subs:', session.subscriptions.size
       );
 
-      // Debug: show sample handles
-      if (debugHandles.length > 0 && session.organic === 0) {
-        AG.log('YouTube', COLOR, 'Sample channels found:', debugHandles.join(', '));
-        AG.log('YouTube', COLOR, 'Tip: Visit youtube.com/feed/subscriptions to sync your subscription list');
-      }
     }
 
     return session;
