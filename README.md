@@ -44,7 +44,7 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 3. Click **Load Temporary Add-on...**
 4. Select `manifest.json` from the extracted folder
 
-> **Note:** Temporary add-ons are removed when Firefox restarts. For a permanent install, the extension will need to be signed via [addons.mozilla.org](https://addons.mozilla.org). Firefox 115+ is required.
+> **Note:** Temporary add-ons are removed when Firefox restarts. We're working on getting it listed on the Firefox Add-ons store for a permanent install.
 
 ## How It Works
 
