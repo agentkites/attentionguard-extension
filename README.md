@@ -30,22 +30,19 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 ### Chrome
 
-1. **Download** - Clone or [download ZIP](https://github.com/agentkites/attentionguard-extension/archive/refs/heads/main.zip) and extract it
+1. **Download** - [Download the Chrome build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip) and extract it
 2. Open Chrome and go to `chrome://extensions/`
 3. Enable **Developer mode** (toggle in top right)
 4. Click **Load unpacked**
-5. Select the extracted `attentionguard-extension` folder
+5. Select the extracted folder
 6. Pin the extension to your toolbar for easy access
 
 ### Firefox
 
-1. **Download** - Clone or [download ZIP](https://github.com/agentkites/attentionguard-extension/archive/refs/heads/main.zip) and extract it
-2. Run `./build.sh` from the extracted folder to generate the Firefox build
-3. Open Firefox and go to `about:debugging#/runtime/this-firefox`
-4. Click **Load Temporary Add-on...**
-5. Navigate to the `build/firefox/` folder and select `manifest.json` inside it
-
-> **Important:** Do not load from the root project folder — Firefox requires a different manifest than Chrome. The `build.sh` script creates a ready-to-load `build/firefox/` folder with the correct manifest.
+1. **Download** - [Download the Firefox build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-firefox.zip) and extract it
+2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
+3. Click **Load Temporary Add-on...**
+4. Select `manifest.json` from the extracted folder
 
 > **Note:** Temporary add-ons are removed when Firefox restarts. For a permanent install, the extension will need to be signed via [addons.mozilla.org](https://addons.mozilla.org). Firefox 115+ is required.
 
