@@ -78,15 +78,12 @@ function getIconPaths(isActive) {
 // Update icon based on platform
 async function updateIcon(tabId, platform) {
   try {
-    console.log('[AttentionGuard] updateIcon called:', { tabId, platform: platform?.id });
-
     if (platform) {
       // Active - red icon
       await chrome.action.setIcon({
         tabId,
         path: getIconPaths(true)
       });
-      console.log('[AttentionGuard] Set ACTIVE icon for tab', tabId);
 
       // Get stats for badge
       const sessions = await getSessions();
@@ -111,7 +108,6 @@ async function updateIcon(tabId, platform) {
         tabId,
         path: getIconPaths(false)
       });
-      console.log('[AttentionGuard] Set INACTIVE icon for tab', tabId);
       await chrome.action.setBadgeText({ tabId, text: '' });
       await chrome.action.setTitle({
         tabId,
@@ -288,9 +284,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 // Update icon when tab URL changes
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
-    console.log('[AttentionGuard] Tab updated:', tab.url);
     const platform = detectPlatform(tab.url);
-    console.log('[AttentionGuard] Detected platform:', platform?.id || 'none');
     if (platform) {
       activeTabs.set(tabId, platform);
     } else {
@@ -307,7 +301,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 // Initialize on install
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log('AttentionGuard installed');
   await chrome.storage.local.set({ settings: { persistSessions: false } });
 
   // Enable side panel (Chrome only; Firefox sidebar is always available via manifest)
@@ -318,4 +311,3 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 });
 
-console.log('AttentionGuard service worker loaded');

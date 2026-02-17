@@ -411,26 +411,6 @@
     initObserver.observe(document.body, { childList: true, subtree: true });
   }
 
-  // Expose debug function for console
-  window.ytDebug = () => {
-    console.log('=== YouTube AttentionGuard Debug ===');
-    console.log('Subscriptions:', Array.from(session.subscriptions));
-    console.log('Session:', {
-      total: session.total,
-      ads: session.ads,
-      algorithmic: session.algorithmic,
-      organic: session.organic
-    });
-
-    // Test channel detection on first video
-    const firstVideo = document.querySelector('ytd-rich-item-renderer');
-    if (firstVideo) {
-      const handle = getChannelHandle(firstVideo);
-      console.log('First video channel:', handle);
-      console.log('Is subscribed:', session.subscriptions.has(handle));
-    }
-  };
-
   // Register for refresh requests (scan is async so wrap it)
   AG.registerPlatform(PLATFORM, session, () => scan());
 })();
