@@ -128,5 +128,11 @@
       "id": "attentionguard@agentkite.com",
       "strict_min_version": "115.0"
     }
+  },
+
+  "data_collection_permissions": {
+    "userDataCollected": false,
+    "dataUsedForAI": false,
+    "disclosureNotice": "AttentionGuard runs entirely locally. No user data is collected, transmitted, or shared."
   }
 }
