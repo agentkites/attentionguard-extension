@@ -48,6 +48,17 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 > **Note:** Temporary add-ons are removed when Firefox restarts. We're working on getting it listed on the Firefox Add-ons store for a permanent install.
 
+### Building from Source
+ 
+```bash
+cd attentionguard-extension
+./build.sh
+```
+
+This produces ready-to-load packages in build/:
+ - `build/chrome/` — load as unpacked extension in Chrome
+ - `build/firefox/` — load as temporary add-on in Firefox
+
 ## How It Works
 
 1. **Install the extension** - icon appears greyed out
