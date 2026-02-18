@@ -116,11 +116,6 @@ attentionguard-extension/
 
 This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for details.
 
-## Credits
-
-- Inspired by the need for transparency in algorithmic feeds
-- Built with contributions from the open-source community
-
 ## Links
 
 - [GitHub Repository](https://github.com/agentkites/attentionguard-extension)
