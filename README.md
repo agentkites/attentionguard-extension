@@ -16,15 +16,15 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 ## Supported Platforms
 
-| Platform | Detection Capabilities |
-|----------|----------------------|
-| **Reddit** | Promoted posts, algorithmic suggestions, geo-targeting, behavioral tracking |
-| **Twitter/X** | Ads, "For You" algorithm, social context (likes, retweets) |
-| **Facebook** | Sponsored posts, dark patterns (FOMO, social proof, variable rewards), side ads |
-| **Instagram** | Sponsored content, suggested posts, non-followed accounts |
-| **LinkedIn** | Promoted content, social reactions, job recommendations, personalization |
-| **YouTube** | Ads, recommended videos, Shorts, subscription vs algorithm |
-| **Amazon** | Sponsored products, urgency tactics, price anchoring, coupon prompts |
+| Platform | Detection Capabilities | Supported routes |
+|----------|----------------------|---------------------|
+| **Reddit** | Promoted posts, algorithmic suggestions, geo-targeting, behavioral tracking | Homepage |
+| **Twitter/X** | Ads, "For You" algorithm, social context (likes, retweets) | Homepage |
+| **Facebook** | Sponsored posts, dark patterns (FOMO, social proof, variable rewards), side ads | Homepage |
+| **Instagram** | Sponsored content, suggested posts, non-followed accounts | Homepage |
+| **LinkedIn** | Promoted content, social reactions, job recommendations, personalization | Homepage |
+| **YouTube** | Ads, recommended videos, Shorts, subscription vs algorithm | Homepage |
+| **Amazon** | Sponsored products, urgency tactics, price anchoring, coupon prompts | Homepage |
 
 ## Installation
 
