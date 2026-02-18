@@ -118,7 +118,6 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ## Credits
 
-- Created and maintained by the [AgentKite](https://agentkite.com) team
 - Inspired by the need for transparency in algorithmic feeds
 - Built with contributions from the open-source community
 
