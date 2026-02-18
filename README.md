@@ -55,7 +55,7 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 3. **Browse normally** - stats update in real-time as you scroll
 4. **Click the icon** - see your manipulation breakdown
 
-### What We Track
+### What it Tracks
 
 - **Ads** - Sponsored/promoted content you're paying to see
 - **Algorithmic** - Content chosen by the platform's algorithm
