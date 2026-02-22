@@ -2,7 +2,12 @@
 
 **See how algorithms manipulate your feed in real-time.**
 
-AttentionGuard is an open-source browser extension for **Chrome** and **Firefox** that reveals the hidden manipulation patterns on social media and e-commerce platforms. Watch as your feed fills with ads, algorithmic recommendations, and social signals - all tracked and visualized in real-time.
+AttentionGuard is an open-source browser extension for Chrome and Firefox that reveals the hidden manipulation patterns on social media and e-commerce platforms. Watch as your feed fills with ads, algorithmic recommendations, and social signals - all tracked and visualized in real-time.
+
+<p align="center">
+  <a href="https://addons.mozilla.org/addon/attentionguard/"><img src="https://img.shields.io/badge/Firefox-Install_Add--on-FF7139?logo=firefox-browser&logoColor=white" alt="Firefox Add-on" /></a>
+  <a href="https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip"><img src="https://img.shields.io/badge/Chrome-Download_Build-4285F4?logo=googlechrome&logoColor=white" alt="Chrome Build" /></a>
+</p>
 
 > Created and Maintained by [AgentKite](https://agentkite.com)
 
@@ -28,7 +33,7 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 ## Installation
 
-### Chrome
+### <img src="https://cdn.jsdelivr.net/gh/nicedoc/brand-icons/icons/google-chrome.svg" width="18" /> Chrome
 
 1. **Download** - [Download the Chrome build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip) and extract it
 2. Open Chrome and go to `chrome://extensions/`
@@ -39,7 +44,7 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 > **Note:** We're working on getting it listed on the Chrome Web Store for a one-click install.
 
-### Firefox
+### <img src="https://cdn.jsdelivr.net/gh/nicedoc/brand-icons/icons/firefox.svg" width="18" /> Firefox
 
 **[Install from Firefox Add-ons](https://addons.mozilla.org/addon/attentionguard/)** — one-click install, auto-updates included.
 
