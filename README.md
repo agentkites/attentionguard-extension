@@ -33,7 +33,7 @@ AttentionGuard is an open-source browser extension for Chrome and Firefox that r
 
 ## Installation
 
-### <img src="https://cdn.jsdelivr.net/gh/nicedoc/brand-icons/icons/google-chrome.svg" width="18" /> Chrome
+### <img src="https://img.shields.io/badge/-Chrome-4285F4?logo=googlechrome&logoColor=white&style=flat-square" height="20" alt="Chrome" />
 
 1. **Download** - [Download the Chrome build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip) and extract it
 2. Open Chrome and go to `chrome://extensions/`
@@ -44,7 +44,7 @@ AttentionGuard is an open-source browser extension for Chrome and Firefox that r
 
 > **Note:** We're working on getting it listed on the Chrome Web Store for a one-click install.
 
-### <img src="https://cdn.jsdelivr.net/gh/nicedoc/brand-icons/icons/firefox.svg" width="18" /> Firefox
+### <img src="https://img.shields.io/badge/-Firefox-FF7139?logo=firefox-browser&logoColor=white&style=flat-square" height="20" alt="Firefox" />
 
 **[Install from Firefox Add-ons](https://addons.mozilla.org/addon/attentionguard/)** — one-click install, auto-updates included.
 
