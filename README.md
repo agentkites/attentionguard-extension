@@ -41,12 +41,7 @@ AttentionGuard is an open-source browser extension for **Chrome** and **Firefox*
 
 ### Firefox
 
-1. **Download** - [Download the Firefox build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-firefox.zip) and extract it
-2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
-3. Click **Load Temporary Add-on...**
-4. Select `manifest.json` from the extracted folder
-
-> **Note:** Temporary add-ons are removed when Firefox restarts. We're working on getting it listed on the Firefox Add-ons store for a permanent install.
+**[Install from Firefox Add-ons](https://addons.mozilla.org/addon/attentionguard/)** — one-click install, auto-updates included.
 
 ### Building from Source
  
@@ -129,6 +124,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ## Links
 
+- [Firefox Add-ons](https://addons.mozilla.org/addon/attentionguard/)
 - [GitHub Repository](https://github.com/agentkites/attentionguard-extension)
 - [Report Issues](https://github.com/agentkites/attentionguard-extension/issues)
 - [AgentKite](https://agentkite.com)
