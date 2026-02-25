@@ -6,7 +6,7 @@ AttentionGuard is an open-source browser extension for Chrome and Firefox that r
 
 <p align="center">
   <a href="https://addons.mozilla.org/addon/attentionguard/"><img src="https://img.shields.io/badge/Firefox-Install_Add--on-FF7139?logo=firefox-browser&logoColor=white" alt="Firefox Add-on" /></a>
-  <a href="https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip"><img src="https://img.shields.io/badge/Chrome-Download_Build-4285F4?logo=googlechrome&logoColor=white" alt="Chrome Build" /></a>
+  <a href="https://chromewebstore.google.com/detail/attentionguard/niehigjikleeokfnkgclgfdgcapfaeoo"><img src="https://img.shields.io/badge/Chrome-Web_Store-4285F4?logo=googlechrome&logoColor=white" alt="Chrome Web Store" /></a>
 </p>
 
 > Created and Maintained by [AgentKite](https://agentkite.com)
@@ -35,14 +35,7 @@ AttentionGuard is an open-source browser extension for Chrome and Firefox that r
 
 ### <img src="https://img.shields.io/badge/-Chrome-4285F4?logo=googlechrome&logoColor=white&style=flat-square" height="20" alt="Chrome" />
 
-1. **Download** - [Download the Chrome build](https://github.com/agentkites/attentionguard-extension/releases/latest/download/attentionguard-1.0.0-chrome.zip) and extract it
-2. Open Chrome and go to `chrome://extensions/`
-3. Enable **Developer mode** (toggle in top right)
-4. Click **Load unpacked**
-5. Select the extracted folder
-6. Pin the extension to your toolbar for easy access
-
-> **Note:** We're working on getting it listed on the Chrome Web Store for a one-click install.
+**[Install from Chrome Web Store](https://chromewebstore.google.com/detail/attentionguard/niehigjikleeokfnkgclgfdgcapfaeoo)** — one-click install, auto-updates included.
 
 ### <img src="https://img.shields.io/badge/-Firefox-FF7139?logo=firefox-browser&logoColor=white&style=flat-square" height="20" alt="Firefox" />
 
@@ -130,6 +123,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 ## Links
 
 - [Firefox Add-ons](https://addons.mozilla.org/addon/attentionguard/)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/attentionguard/niehigjikleeokfnkgclgfdgcapfaeoo)
 - [GitHub Repository](https://github.com/agentkites/attentionguard-extension)
 - [Report Issues](https://github.com/agentkites/attentionguard-extension/issues)
 - [AgentKite](https://agentkite.com)
