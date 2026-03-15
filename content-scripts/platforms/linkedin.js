@@ -38,25 +38,25 @@
   const session = AG.createSession();
   const state = AG.createState();
 
-  // LinkedIn DOM selectors - updated for current LinkedIn layout
-  const POST_SELECTORS = [
-    '[data-view-name="feed-full-update"]',   // Current LinkedIn (2025+)
-    '[data-id^="urn:li:activity"]',           // Legacy fallback
-    '.occludable-update'                      // Legacy fallback
-  ];
+  // LinkedIn DOM selectors - updated for current LinkedIn layout (2026+)
+  // LinkedIn now uses data-testid="mainFeed" with role="list" as feed container,
+  // and role="listitem" for individual posts. Posts have unique componentkey attrs.
+  const FEED_SELECTOR = '[data-testid="mainFeed"]';
+  const POST_SELECTOR = '[role="listitem"]';
 
   function getPosts() {
     const posts = [];
     const seen = {};
+    const feed = document.querySelector(FEED_SELECTOR);
+    if (!feed) return posts;
 
-    POST_SELECTORS.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => {
-        const id = el.getAttribute('data-id') || AG.generateId('li', el.innerText);
-        if (!seen[id]) {
-          seen[id] = true;
-          posts.push({ el, id });
-        }
-      });
+    feed.querySelectorAll(POST_SELECTOR).forEach(el => {
+      const key = el.getAttribute('componentkey') || '';
+      const id = key || AG.generateId('li', el.innerText);
+      if (!seen[id]) {
+        seen[id] = true;
+        posts.push({ el, id });
+      }
     });
 
     return posts;
@@ -113,10 +113,10 @@
     // Notify background that LinkedIn is active
     AG.notifyActive(PLATFORM);
 
-    const container = document.querySelector('main') || document.body;
+    const container = document.querySelector(FEED_SELECTOR) || document.querySelector('main') || document.body;
     const watcher = AG.createWatcher({
       container,
-      selector: POST_SELECTORS.join(', '),
+      selector: POST_SELECTOR,
       onNewContent: scan,
       debounceMs: 800
     });
