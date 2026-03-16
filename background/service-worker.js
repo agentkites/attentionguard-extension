@@ -235,6 +235,116 @@ async function handleMessage(message, sender) {
       return { success: true };
     }
 
+    // ─── Research Logger Messages ─────────────────────────────────
+
+    case 'LOGGER_START_SCAN': {
+      // Navigate active tab to platform URL and tell content script to start
+      const { platform, url } = message.data;
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      console.log('[AG Background] LOGGER_START_SCAN:', platform, 'active tab:', tab?.id, tab?.url);
+
+      if (tab?.id) {
+        // Store scan flag so content script knows to start on page load
+        await chrome.storage.local.set({ loggerActiveScan: platform });
+
+        // Check if already on the correct platform
+        const urlHost = url.replace('https://www.', '').split('/')[0];
+        const alreadyOnPlatform = tab.url && tab.url.includes(urlHost);
+        console.log('[AG Background] alreadyOnPlatform:', alreadyOnPlatform, 'urlHost:', urlHost);
+
+        if (alreadyOnPlatform) {
+          // Already on the platform — send direct message to content script
+          try {
+            const response = await chrome.tabs.sendMessage(tab.id, {
+              type: 'LOGGER_START',
+              data: { platform }
+            });
+            console.log('[AG Background] LOGGER_START sent, response:', JSON.stringify(response));
+          } catch (e) {
+            console.log('[AG Background] LOGGER_START failed, reloading:', e.message);
+            // Content script may not be ready, force reload
+            await chrome.tabs.update(tab.id, { url });
+          }
+        } else {
+          console.log('[AG Background] Navigating to:', url);
+          // Navigate to the platform
+          await chrome.tabs.update(tab.id, { url });
+        }
+      }
+      return { success: true };
+    }
+
+    case 'LOGGER_STOP_SCAN': {
+      // Tell content script to stop auto-scroll
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        try {
+          await chrome.tabs.sendMessage(tab.id, { type: 'LOGGER_STOP' });
+        } catch (e) {}
+      }
+      await chrome.storage.local.remove('loggerActiveScan');
+      return { success: true };
+    }
+
+    case 'LOGGER_SESSION_START': {
+      // Content script started a logger session
+      return { success: true };
+    }
+
+    case 'LOGGER_PROGRESS': {
+      // Forward progress to side panel
+      chrome.runtime.sendMessage({
+        type: 'LOGGER_PROGRESS',
+        data: message.data
+      }).catch(() => {});
+      return { success: true };
+    }
+
+    case 'LOGGER_SESSION_COMPLETE': {
+      // Forward completion to side panel
+      await chrome.storage.local.remove('loggerActiveScan');
+      chrome.runtime.sendMessage({
+        type: 'LOGGER_SESSION_COMPLETE',
+        data: message.data
+      }).catch(() => {});
+      return { success: true };
+    }
+
+    case 'LOGGER_SUBMIT_DATA': {
+      // Submit payloads to HuggingFace (via Cloudflare Worker proxy)
+      const { payloads } = message.data;
+      try {
+        // For now, store locally. Submission endpoint will be configured later.
+        await chrome.storage.local.set({
+          loggerSubmittedPayloads: payloads,
+          loggerSubmittedAt: Date.now()
+        });
+        // TODO: POST to Cloudflare Worker → HuggingFace
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message };
+      }
+    }
+
+    case 'LOGGER_GET_ACTIVE_SCAN': {
+      const data = await chrome.storage.local.get('loggerActiveScan');
+      return { platform: data.loggerActiveScan || null };
+    }
+
+    case 'LOGGER_GET_PROGRESS': {
+      // Poll content script for current progress
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab?.id) {
+          const response = await chrome.tabs.sendMessage(tab.id, { type: 'LOGGER_GET_STATUS' });
+          return { data: response || null };
+        }
+      } catch (e) {
+        // Content script not available
+      }
+      return { data: null };
+    }
+
     default:
       return { error: 'Unknown message type' };
   }

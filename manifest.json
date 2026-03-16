@@ -44,32 +44,68 @@
   "content_scripts": [
     {
       "matches": ["*://*.reddit.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/reddit.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/reddit.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.twitter.com/*", "*://*.x.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/twitter.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/twitter.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.facebook.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/facebook.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/facebook.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.instagram.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/instagram.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/instagram.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.linkedin.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/linkedin.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/linkedin.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.youtube.com/*"],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/youtube.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/youtube.js"
+      ],
       "run_at": "document_idle"
     },
     {
@@ -89,13 +125,19 @@
         "*://*.amazon.com.mx/*",
         "*://*.amazon.sg/*"
       ],
-      "js": ["content-scripts/core/attentionguard-core.js", "content-scripts/platforms/amazon.js"],
+      "js": [
+        "content-scripts/core/attentionguard-core.js",
+        "content-scripts/core/logger.js",
+        "content-scripts/core/network-detector.js",
+        "content-scripts/core/health-check.js",
+        "content-scripts/platforms/amazon.js"
+      ],
       "run_at": "document_idle"
     }
   ],
 
   "side_panel": {
-    "default_path": "popup/popup.html"
+    "default_path": "popup/logger.html"
   },
 
   "action": {

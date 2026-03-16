@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AttentionGuard Research Logger</title>
+  <link rel="stylesheet" href="logger.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header id="header">
+      <div class="logo">
+        <img src="../assets/icons/brain-cog.png" alt="AG" width="24" height="24">
+        <span class="logo-text">AttentionGuard <span class="badge">Research</span></span>
+      </div>
+    </header>
+
+    <!-- View: Onboarding -->
+    <div id="view-onboarding" class="view hidden">
+      <h2>Feed Analysis Setup</h2>
+      <p class="subtitle">Help us understand how platforms manipulate feeds. Your data is anonymized — only aggregate statistics are shared.</p>
+
+      <form id="onboarding-form">
+        <label>
+          Country <span class="required">*</span>
+          <select id="field-country" required>
+            <option value="">Select country...</option>
+          </select>
+        </label>
+
+        <label>
+          Age Range
+          <select id="field-age">
+            <option value="">Skip</option>
+            <option value="18-24">18-24</option>
+            <option value="25-34">25-34</option>
+            <option value="35-44">35-44</option>
+            <option value="45-54">45-54</option>
+            <option value="55+">55+</option>
+          </select>
+        </label>
+
+        <label>
+          How often do you use social media?
+          <select id="field-usage">
+            <option value="">Skip</option>
+            <option value="daily">Daily</option>
+            <option value="few_times_week">Few times a week</option>
+            <option value="occasional">Occasionally</option>
+          </select>
+        </label>
+
+        <label>
+          Are you using a VPN right now?
+          <select id="field-vpn">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </label>
+
+        <div class="consent-box">
+          <label class="checkbox-label">
+            <input type="checkbox" id="field-consent" required>
+            <span>I consent to sharing anonymized, aggregate-level feed statistics for research. No personal data or feed content is transmitted.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-start">Start Analysis</button>
+      </form>
+    </div>
+
+    <!-- View: Platform Checklist -->
+    <div id="view-checklist" class="view hidden">
+      <h2>Your Feed Analysis</h2>
+      <p class="subtitle" id="checklist-subtitle">Complete all platforms for your full scorecard.</p>
+
+      <div id="platform-list">
+        <div class="platform-row" data-platform="linkedin">
+          <img src="../assets/platforms/linkedin.png" alt="LinkedIn" width="28" height="28">
+          <div class="platform-info">
+            <span class="platform-name">LinkedIn</span>
+            <span class="platform-status" id="status-linkedin">Not started</span>
+          </div>
+          <div class="platform-progress" id="progress-linkedin"></div>
+          <button class="btn-platform" id="btn-linkedin" data-platform="linkedin">Start</button>
+        </div>
+
+        <div class="platform-row" data-platform="reddit">
+          <img src="../assets/platforms/reddit.png" alt="Reddit" width="28" height="28">
+          <div class="platform-info">
+            <span class="platform-name">Reddit</span>
+            <span class="platform-status" id="status-reddit">Not started</span>
+          </div>
+          <div class="platform-progress" id="progress-reddit"></div>
+          <button class="btn-platform" id="btn-reddit" data-platform="reddit">Start</button>
+        </div>
+
+        <div class="platform-row" data-platform="facebook">
+          <img src="../assets/platforms/facebook.png" alt="Facebook" width="28" height="28">
+          <div class="platform-info">
+            <span class="platform-name">Facebook</span>
+            <span class="platform-status" id="status-facebook">Not started</span>
+          </div>
+          <div class="platform-progress" id="progress-facebook"></div>
+          <button class="btn-platform" id="btn-facebook" data-platform="facebook">Start</button>
+        </div>
+
+        <div class="platform-row" data-platform="instagram">
+          <img src="../assets/platforms/instagram.png" alt="Instagram" width="28" height="28">
+          <div class="platform-info">
+            <span class="platform-name">Instagram</span>
+            <span class="platform-status" id="status-instagram">Not started</span>
+          </div>
+          <div class="platform-progress" id="progress-instagram"></div>
+          <button class="btn-platform" id="btn-instagram" data-platform="instagram">Start</button>
+        </div>
+      </div>
+
+      <div id="checklist-footer">
+        <span id="platforms-remaining">0 of 4 completed</span>
+        <button class="btn-secondary" id="btn-view-scorecard" disabled>View Scorecard</button>
+      </div>
+      <div id="checklist-actions">
+        <button class="btn-link" id="btn-edit-profile">Edit Profile</button>
+        <span class="separator">&middot;</span>
+        <button class="btn-link btn-danger" id="btn-reset-all">Reset All Data</button>
+      </div>
+    </div>
+
+    <!-- View: Active Scan -->
+    <div id="view-scanning" class="view hidden">
+      <div id="scan-header">
+        <img id="scan-platform-icon" width="32" height="32" alt="">
+        <div>
+          <h2 id="scan-platform-name">LinkedIn</h2>
+          <span class="subtitle" id="scan-subtitle">Analyzing your feed...</span>
+        </div>
+      </div>
+
+      <div id="scan-progress-container">
+        <div id="scan-progress-bar">
+          <div id="scan-progress-fill"></div>
+        </div>
+        <span id="scan-progress-text">0 / 500</span>
+      </div>
+
+      <!-- Live Hypothesis Chart -->
+      <div id="scan-chart-container">
+        <div id="scan-chart-header">
+          <span class="chart-title">Feed Composition by Scroll Depth</span>
+          <span class="chart-annotation" id="scan-annotation"></span>
+        </div>
+        <canvas id="scan-chart" width="328" height="160"></canvas>
+        <div id="scan-chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#27ae60"></span>Organic</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#e67e22"></span>Algorithmic</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#e74c3c"></span>Ads</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#9b59b6"></span>Social</span>
+        </div>
+      </div>
+
+      <!-- Key metric callout -->
+      <div id="scan-metric-callout" class="hidden">
+        <span id="scan-metric-icon">&#9888;</span>
+        <span id="scan-metric-text"></span>
+      </div>
+
+      <!-- Compact live stats -->
+      <div id="scan-live-stats">
+        <div class="stat-pill">
+          <span class="pill-label">Organic</span>
+          <span class="pill-value" id="scan-organic">—</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Algo</span>
+          <span class="pill-value" id="scan-algorithmic">—</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Ads</span>
+          <span class="pill-value" id="scan-ads">—</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Social</span>
+          <span class="pill-value" id="scan-social">—</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Time</span>
+          <span class="pill-value" id="scan-elapsed">0:00</span>
+        </div>
+      </div>
+
+      <div id="scan-account-age">
+        <label>
+          How old is this account?
+          <select id="field-account-age">
+            <option value="">Skip</option>
+            <option value="fresh">Less than 1 year</option>
+            <option value="established">1-3 years</option>
+            <option value="longterm">3+ years</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="btn-secondary" id="btn-stop-scan">Stop Early</button>
+    </div>
+
+    <!-- View: Platform Complete -->
+    <div id="view-platform-done" class="view hidden">
+      <div id="done-header">
+        <span class="done-checkmark">&#10003;</span>
+        <h2 id="done-platform-name">LinkedIn Complete!</h2>
+      </div>
+
+      <div id="done-mini-scorecard">
+        <div class="mini-stat">
+          <span class="mini-label">Items Scanned</span>
+          <span class="mini-value" id="done-items">500</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-label">Organic</span>
+          <span class="mini-value" id="done-organic">—</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-label">Manipulation Density</span>
+          <span class="mini-value" id="done-manip">—</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-label">Organic Half-Life</span>
+          <span class="mini-value" id="done-halflife">—</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-next-platform">Next Platform</button>
+      <button class="btn-secondary" id="btn-back-checklist">Back to Checklist</button>
+    </div>
+
+    <!-- View: Full Scorecard -->
+    <div id="view-scorecard" class="view hidden">
+      <h2>Your Feed Scorecard</h2>
+      <p class="subtitle">Cross-platform feed analysis results</p>
+
+      <div id="scorecard-table-container">
+        <table id="scorecard-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Organic<br>Half-Life</th>
+              <th>Manip.<br>Density</th>
+              <th>Ad %</th>
+              <th>Organic<br>Decay</th>
+            </tr>
+          </thead>
+          <tbody id="scorecard-body">
+          </tbody>
+        </table>
+      </div>
+
+      <div id="scorecard-actions">
+        <button class="btn-primary" id="btn-submit-data">Share Results to Dataset</button>
+        <p class="help-text">Contributes your anonymized segment-level data to the public HuggingFace dataset for research.</p>
+      </div>
+
+      <div id="submit-status" class="hidden">
+        <span id="submit-status-text"></span>
+      </div>
+    </div>
+
+    <!-- View: Submission Complete -->
+    <div id="view-submitted" class="view hidden">
+      <div class="done-header">
+        <span class="done-checkmark">&#10003;</span>
+        <h2>Data Submitted!</h2>
+      </div>
+      <p class="subtitle">Thank you for contributing to feed transparency research.</p>
+      <p class="help-text">Your anonymized data has been added to the <a href="https://huggingface.co/datasets/attentionguard/feed-intelligence" target="_blank">public dataset</a>.</p>
+      <button class="btn-secondary" id="btn-done">Close</button>
+    </div>
+
+  </div>
+
+  <script src="logger-ui.js"></script>
+</body>
+</html>

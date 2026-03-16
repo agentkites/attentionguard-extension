@@ -110,12 +110,19 @@
   function startWatch() {
     if (state.observer) return;
 
+    // Wait for the feed to actually exist in the DOM
+    const feed = document.querySelector(FEED_SELECTOR);
+    if (!feed) {
+      AG.log('LinkedIn', COLOR, 'Feed not found yet, retrying in 1s...');
+      setTimeout(startWatch, 1000);
+      return;
+    }
+
     // Notify background that LinkedIn is active
     AG.notifyActive(PLATFORM);
 
-    const container = document.querySelector(FEED_SELECTOR) || document.querySelector('main') || document.body;
     const watcher = AG.createWatcher({
-      container,
+      container: feed,
       selector: POST_SELECTOR,
       onNewContent: scan,
       debounceMs: 800
@@ -125,8 +132,13 @@
     state.observer = watcher;
     state.isWatching = true;
 
-    AG.log('LinkedIn', COLOR, 'Real-time watching started');
+    AG.log('LinkedIn', COLOR, 'Real-time watching started, feed found:', feed.children.length, 'children');
     scan();
+
+    // Periodic re-scan every 2s to catch posts the MutationObserver may miss
+    setInterval(function() {
+      scan();
+    }, 2000);
   }
 
   startWatch();
