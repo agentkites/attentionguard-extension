@@ -226,9 +226,26 @@ h2 {
   white-space: nowrap;
 }
 
+.platform-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
 .btn-platform:hover { background: #8E44AD; }
-.btn-platform.done { background: #27ae60; pointer-events: none; }
-.btn-platform.done::after { content: ' ✓'; }
+
+.btn-view-result {
+  padding: 4px 8px;
+  background: #2a2a2a;
+  color: #aaa;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.btn-view-result:hover { background: #333; color: #fff; border-color: #555; }
 
 #checklist-footer {
   display: flex;

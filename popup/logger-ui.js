@@ -152,6 +152,8 @@
 
       const result = state.platformResults[platform];
 
+      var viewBtn = document.getElementById('btn-view-' + platform);
+
       if (result && result.complete) {
         completed++;
         var label = result.itemCount + ' items' + (result.partial ? ' (partial)' : '');
@@ -162,6 +164,7 @@
         rowEl.className = 'platform-row complete';
         var color = result.partial ? '#e67e22' : '#27ae60';
         progressEl.innerHTML = '<div class="fill" style="width:100%;background:' + color + '"></div>';
+        viewBtn.classList.remove('hidden');
       } else {
         statusEl.textContent = 'Not started';
         statusEl.className = 'platform-status';
@@ -169,6 +172,7 @@
         btnEl.className = 'btn-platform';
         rowEl.className = 'platform-row';
         progressEl.innerHTML = '';
+        viewBtn.classList.add('hidden');
       }
     });
 
@@ -186,11 +190,52 @@
     }
   }
 
+  function showPlatformResults(platform) {
+    var result = state.platformResults[platform];
+    if (!result) return;
+
+    state.activePlatform = platform;
+    showView('view-platform-done');
+
+    var label = result.partial
+      ? PLATFORM_NAMES[platform] + ' — ' + result.itemCount + ' items'
+      : PLATFORM_NAMES[platform] + ' Complete!';
+    document.getElementById('done-platform-name').textContent = label;
+    document.getElementById('done-items').textContent = result.itemCount;
+
+    var metrics = result.metrics || {};
+    if (result.segments && result.segments[0]) {
+      document.getElementById('done-organic').textContent = result.segments[0].organic + '%';
+    } else {
+      document.getElementById('done-organic').textContent = '\u2014';
+    }
+    document.getElementById('done-manip').textContent =
+      metrics.avgManipDensity != null ? metrics.avgManipDensity.toFixed(2) : '\u2014';
+    document.getElementById('done-halflife').textContent =
+      metrics.organicHalfLife ? 'Item ' + metrics.organicHalfLife : 'Never';
+
+    var nextPlatform = getNextPlatform(platform);
+    var nextBtn = document.getElementById('btn-next-platform');
+    if (nextPlatform) {
+      nextBtn.textContent = 'Next: ' + PLATFORM_NAMES[nextPlatform];
+      nextBtn.classList.remove('hidden');
+      nextBtn.onclick = function() { startPlatformScan(nextPlatform); };
+    } else {
+      nextBtn.textContent = 'View Full Scorecard';
+      nextBtn.onclick = function() { showScorecard(); };
+    }
+  }
+
   function initChecklist() {
-    // Platform start buttons
+    // Platform start/rescan buttons
     PLATFORMS.forEach(function(platform) {
       document.getElementById('btn-' + platform).addEventListener('click', function() {
         startPlatformScan(platform);
+      });
+
+      // View results buttons
+      document.getElementById('btn-view-' + platform).addEventListener('click', function() {
+        showPlatformResults(platform);
       });
     });
 
@@ -680,6 +725,9 @@
   // ─── Data Export ──────────────────────────────────────────────────
 
   function getLastCompletedPlatform() {
+    if (state.activePlatform && state.platformResults[state.activePlatform]) {
+      return state.activePlatform;
+    }
     for (var i = PLATFORMS.length - 1; i >= 0; i--) {
       if (state.platformResults[PLATFORMS[i]]) return PLATFORMS[i];
     }
@@ -790,7 +838,11 @@
     });
 
     document.getElementById('btn-segments-back').addEventListener('click', function() {
-      showView('view-platform-done');
+      if (state.activePlatform && state.platformResults[state.activePlatform]) {
+        showPlatformResults(state.activePlatform);
+      } else {
+        showChecklist();
+      }
     });
   }
 
