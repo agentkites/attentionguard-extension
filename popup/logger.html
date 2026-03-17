@@ -233,7 +233,36 @@
       </div>
 
       <button class="btn-primary" id="btn-next-platform">Next Platform</button>
+      <div id="done-data-actions">
+        <button class="btn-link" id="btn-export-csv">Export CSV</button>
+        <span class="separator">&middot;</span>
+        <button class="btn-link" id="btn-export-json">Export JSON</button>
+        <span class="separator">&middot;</span>
+        <button class="btn-link" id="btn-view-segments">View Segments</button>
+      </div>
       <button class="btn-secondary" id="btn-back-checklist">Back to Checklist</button>
+    </div>
+
+    <!-- View: Segment Detail -->
+    <div id="view-segments" class="view hidden">
+      <h2 id="segments-title">Segment Data</h2>
+      <p class="subtitle">10 items per segment, 50 segments total</p>
+      <div id="segments-table-container">
+        <table id="segments-table">
+          <thead>
+            <tr>
+              <th>Seg</th>
+              <th>Org%</th>
+              <th>Algo%</th>
+              <th>Ad%</th>
+              <th>Soc%</th>
+              <th>Manip</th>
+            </tr>
+          </thead>
+          <tbody id="segments-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-secondary" id="btn-segments-back">Back</button>
     </div>
 
     <!-- View: Full Scorecard -->

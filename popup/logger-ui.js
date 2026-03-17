@@ -677,6 +677,123 @@
     document.getElementById('submit-status').classList.add('hidden');
   }
 
+  // ─── Data Export ──────────────────────────────────────────────────
+
+  function getLastCompletedPlatform() {
+    for (var i = PLATFORMS.length - 1; i >= 0; i--) {
+      if (state.platformResults[PLATFORMS[i]]) return PLATFORMS[i];
+    }
+    return state.activePlatform;
+  }
+
+  function exportCSV(platform) {
+    var result = state.platformResults[platform];
+    if (!result || !result.segments) return;
+
+    var rows = ['segment,items_start,items_end,organic_pct,algo_pct,ad_pct,social_pct,fomo_pct,tracking_pct,variable_reward_pct,manip_density'];
+    var segments = result.segments;
+    for (var i = 0; i < segments.length; i++) {
+      var s = segments[i];
+      rows.push([
+        s.seg || (i + 1),
+        i * 10 + 1,
+        (i + 1) * 10,
+        s.organic,
+        s.algo,
+        s.ad,
+        s.social_pressure || 0,
+        s.fomo || 0,
+        s.tracking || 0,
+        s.variable_reward || 0,
+        s.manip_density || 0
+      ].join(','));
+    }
+
+    var csv = rows.join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'attentionguard-' + platform + '-segments.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportJSON(platform) {
+    var result = state.platformResults[platform];
+    if (!result) return;
+
+    var payload = {
+      platform: platform,
+      sessionId: result.sessionId,
+      itemCount: result.itemCount,
+      partial: result.partial || false,
+      completedAt: result.completedAt ? new Date(result.completedAt).toISOString() : null,
+      segments: result.segments,
+      metrics: result.metrics,
+      userProfile: state.userProfile
+    };
+
+    var json = JSON.stringify(payload, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'attentionguard-' + platform + '-session.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function showSegmentView(platform) {
+    var result = state.platformResults[platform];
+    if (!result || !result.segments) return;
+
+    showView('view-segments');
+    document.getElementById('segments-title').textContent =
+      PLATFORM_NAMES[platform] + ' — Segment Data';
+
+    var tbody = document.getElementById('segments-body');
+    tbody.innerHTML = '';
+
+    var segments = result.segments;
+    for (var i = 0; i < segments.length; i++) {
+      var s = segments[i];
+      var tr = document.createElement('tr');
+
+      var orgClass = s.organic >= 60 ? 'high' : (s.organic >= 40 ? 'medium' : 'low');
+      var algoClass = s.algo <= 10 ? '' : (s.algo <= 30 ? 'medium' : 'low');
+      var adClass = s.ad <= 10 ? '' : (s.ad <= 20 ? 'medium' : 'low');
+
+      tr.innerHTML =
+        '<td>' + (s.seg || (i + 1)) + '</td>' +
+        '<td class="' + orgClass + '">' + s.organic + '</td>' +
+        '<td class="' + algoClass + '">' + s.algo + '</td>' +
+        '<td class="' + adClass + '">' + s.ad + '</td>' +
+        '<td>' + (s.social_pressure || 0) + '</td>' +
+        '<td>' + (s.manip_density != null ? s.manip_density.toFixed(2) : '—') + '</td>';
+
+      tbody.appendChild(tr);
+    }
+  }
+
+  function initDataExports() {
+    document.getElementById('btn-export-csv').addEventListener('click', function() {
+      exportCSV(getLastCompletedPlatform());
+    });
+
+    document.getElementById('btn-export-json').addEventListener('click', function() {
+      exportJSON(getLastCompletedPlatform());
+    });
+
+    document.getElementById('btn-view-segments').addEventListener('click', function() {
+      showSegmentView(getLastCompletedPlatform());
+    });
+
+    document.getElementById('btn-segments-back').addEventListener('click', function() {
+      showView('view-platform-done');
+    });
+  }
+
   function initScorecard() {
     document.getElementById('btn-submit-data').addEventListener('click', submitData);
 
@@ -791,6 +908,7 @@
     initOnboarding();
     initChecklist();
     initScanning();
+    initDataExports();
     initScorecard();
 
     // Determine which view to show

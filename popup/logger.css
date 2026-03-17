@@ -559,6 +559,61 @@ h2 {
   color: #ef4444;
 }
 
+#done-data-actions {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 12px 0 4px;
+}
+
+/* Segments table */
+#segments-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+#segments-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+#segments-table th {
+  text-align: right;
+  padding: 6px 5px;
+  color: #888;
+  font-weight: 500;
+  font-size: 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #2a2a2a;
+  position: sticky;
+  top: 0;
+  background: #0f0f0f;
+}
+
+#segments-table th:first-child { text-align: center; }
+
+#segments-table td {
+  text-align: right;
+  padding: 5px 5px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #ccc;
+}
+
+#segments-table td:first-child {
+  text-align: center;
+  color: #666;
+  font-weight: 600;
+}
+
+#segments-table tr:hover td { background: #1a1a1a; }
+
+#segments-table .high { color: #27ae60; }
+#segments-table .medium { color: #e67e22; }
+#segments-table .low { color: #e74c3c; }
+
 /* View: Submitted */
 #view-submitted {
   text-align: center;
