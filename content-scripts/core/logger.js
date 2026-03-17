@@ -34,24 +34,32 @@
   function mapToResearchLabels(classification, labels) {
     const researchLabels = [];
 
-    // Primary classification
-    if (classification === 'ad') {
-      researchLabels.push(RESEARCH_LABELS.AD);
-    } else if (classification === 'algorithmic') {
-      researchLabels.push(RESEARCH_LABELS.ALGORITHMIC);
-    } else if (classification === 'organic') {
-      researchLabels.push(RESEARCH_LABELS.ORGANIC);
-    }
+    // Scan ALL labels independently — research taxonomy is multi-label
+    // A single post can be AD + SOCIAL_PRESSURE, or ALGORITHMIC + BEHAVIORAL_TRACKING
+    var hasAd = false, hasAlgo = false, hasSocial = false;
 
-    // Multi-label: scan all labels for manipulation signals
     for (const label of labels) {
       const cat = (label.category || '').toUpperCase();
       const type = label.type || '';
+
+      // Ad signals
+      if (type === 'ad' || cat.includes('ADVERTISING') || cat.includes('SPONSORED') ||
+          cat.includes('PROMOTED')) {
+        hasAd = true;
+      }
+
+      // Algorithmic signals — content surfaced by recommendation engine
+      if (type === 'algorithmic' || cat.includes('SUGGESTED') || cat.includes('RECOMMENDED') ||
+          cat.includes('PEOPLE_SUGGESTION') || cat.includes('JOB_RECOMMENDATION') ||
+          cat.includes('PERSONALIZED') || cat.includes('BASED_ON')) {
+        hasAlgo = true;
+      }
 
       // Social pressure signals
       if (type === 'social' || cat.includes('SOCIAL') || cat.includes('REACTION') ||
           cat.includes('REPOST') || cat.includes('COMMENT') || cat.includes('GRAPH') ||
           cat.includes('FOLLOW') || cat.includes('MUTUAL') || cat.includes('CONNECTION')) {
+        hasSocial = true;
         if (!researchLabels.includes(RESEARCH_LABELS.SOCIAL_PRESSURE)) {
           researchLabels.push(RESEARCH_LABELS.SOCIAL_PRESSURE);
         }
@@ -67,9 +75,8 @@
       }
 
       // Behavioral tracking signals
-      if (cat.includes('TRACKING') || cat.includes('PERSONALIZED') || cat.includes('BEHAVIORAL') ||
-          cat.includes('RECOMMENDATION_SOURCE') || cat.includes('PROFILE') ||
-          cat.includes('BASED_ON')) {
+      if (cat.includes('TRACKING') || cat.includes('RECOMMENDATION_SOURCE') ||
+          cat.includes('BEHAVIORAL')) {
         if (!researchLabels.includes(RESEARCH_LABELS.BEHAVIORAL_TRACKING)) {
           researchLabels.push(RESEARCH_LABELS.BEHAVIORAL_TRACKING);
         }
@@ -84,10 +91,19 @@
       }
     }
 
-    // If no primary label assigned, default to organic
-    if (!researchLabels.includes(RESEARCH_LABELS.AD) &&
-        !researchLabels.includes(RESEARCH_LABELS.ALGORITHMIC) &&
-        !researchLabels.includes(RESEARCH_LABELS.ORGANIC)) {
+    // Add primary content type labels (these are NOT mutually exclusive)
+    if (hasAd) researchLabels.push(RESEARCH_LABELS.AD);
+    if (hasAlgo) researchLabels.push(RESEARCH_LABELS.ALGORITHMIC);
+
+    // Organic = no ad, no algorithmic, no social signals
+    // A post from someone you follow, shown without any recommendation label
+    if (!hasAd && !hasAlgo && !hasSocial) {
+      researchLabels.push(RESEARCH_LABELS.ORGANIC);
+    }
+
+    // If only social signals (no ad/algo), still mark as organic base + social overlay
+    // "Your connection liked this" is organic content amplified by social pressure
+    if (!hasAd && !hasAlgo && hasSocial) {
       researchLabels.push(RESEARCH_LABELS.ORGANIC);
     }
 
@@ -241,26 +257,43 @@
     _scrollBy: function(amount) {
       if (this._scrollTarget) {
         // Use scrollTop directly — some platforms (LinkedIn) intercept scrollBy
-        // Animate manually for smooth appearance
+        // Animate with setTimeout (not rAF — rAF pauses in background tabs)
         var el = this._scrollTarget;
         var start = el.scrollTop;
-        var target = start + amount;
-        var duration = 400;
-        var startTime = performance.now();
+        var steps = 8;
+        var stepMs = 50;
+        var stepNum = 0;
 
-        function step(now) {
-          var elapsed = now - startTime;
-          var progress = Math.min(elapsed / duration, 1);
-          // Ease out
+        function doStep() {
+          stepNum++;
+          var progress = stepNum / steps;
           var ease = 1 - Math.pow(1 - progress, 3);
           el.scrollTop = start + (amount * ease);
-          if (progress < 1) {
-            requestAnimationFrame(step);
+          if (stepNum < steps) {
+            setTimeout(doStep, stepMs);
           }
         }
-        requestAnimationFrame(step);
+        doStep();
       } else {
-        window.scrollBy({ top: amount, behavior: 'smooth' });
+        // For window scroll, set scrollTop directly too (scrollBy may not work in background)
+        var current = document.documentElement.scrollTop || document.body.scrollTop || 0;
+        var target = current + amount;
+        var steps = 8;
+        var stepMs = 50;
+        var stepNum = 0;
+
+        function doWindowStep() {
+          stepNum++;
+          var progress = stepNum / steps;
+          var ease = 1 - Math.pow(1 - progress, 3);
+          var val = current + (amount * ease);
+          document.documentElement.scrollTop = val;
+          document.body.scrollTop = val;
+          if (stepNum < steps) {
+            setTimeout(doWindowStep, stepMs);
+          }
+        }
+        doWindowStep();
       }
     },
 
